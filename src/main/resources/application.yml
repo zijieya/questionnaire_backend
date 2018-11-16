@@ -2,7 +2,7 @@ logging:
   file: "questionnaire.log"
 spring:
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: com.mysql.jdbc.Driver
     password: "eZi8V5E07aoARvy0"
     username: "questionnaire"
     url: "jdbc:mysql://173.82.232.134:3306/questionnaire"
