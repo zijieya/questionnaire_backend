@@ -16,11 +16,13 @@ import win.jieblog.questionnaire.filter.LoginFilter;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService userDetailsService;
+    @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable().authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/users/signup").permitAll()
+                .antMatchers("/swagger-ui.html","/webjars/**","/swagger-resources/**","/v2/api-docs").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new LoginFilter(authenticationManager()))
@@ -31,4 +33,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
     }
+
 }
