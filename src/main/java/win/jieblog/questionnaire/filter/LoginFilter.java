@@ -1,67 +1,96 @@
 package win.jieblog.questionnaire.filter;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import win.jieblog.questionnaire.model.entity.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Component;
+import win.jieblog.questionnaire.enums.ErrorCode;
+import win.jieblog.questionnaire.exception.AuthorityException;
+import win.jieblog.questionnaire.utils.JwtHelper;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
+import javax.servlet.*;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
- * 验证用户名密码正确后，生成一个token，并将token返回给客户端
+ * todo：抛出异常信息
  */
-public class LoginFilter extends UsernamePasswordAuthenticationFilter {
-    private AuthenticationManager authenticationManager;
+@WebFilter(urlPatterns = "/user/*")
+public class LoginFilter implements Filter  {
+    private RedisTemplate template;
+    @Autowired
+    public void setTemplate(@Qualifier("redisTemplate") RedisTemplate template) {
+        this.template = template;
+    }
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
 
-    public LoginFilter(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
     }
 
-    // 接收并解析用户凭证
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest req,
-                                                HttpServletResponse res) throws AuthenticationException {
-        try {
-            User user = new ObjectMapper()
-                    .readValue(req.getInputStream(), User.class);
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        final HttpServletRequest req = (HttpServletRequest)request;
+        final String authHeader = req.getHeader("Authorization");
+        if (authHeader == null) {
+            try {
+                throw new AuthorityException("不存在token", ErrorCode.EMPTY_TOKEN.getCode());
+            } catch (AuthorityException e) {
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            if(!authHeader.startsWith("Bearer ")){
+                try {
+                    throw new AuthorityException("token不合法",ErrorCode.INVALID_TOKEN.getCode());
+                } catch (AuthorityException e) {
+                    e.printStackTrace();
+                }
+            }
+            //进行校验
+            else
+            {
+                JwtHelper jwtHelper=new JwtHelper();
+                final String token = authHeader.substring(7);
+                final Claims claims = jwtHelper.parseKey(token);
+                //过期
+                if(claims.getExpiration().before(new Date(System.currentTimeMillis()))){
+                    try {
+                        throw new AuthorityException("token过期",ErrorCode.EXPIRE_TOKEN.getCode());
+                    } catch (AuthorityException e) {
+                        e.printStackTrace();
+                    }
+                }
 
-            return authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            user.getUsername(),
-                            user.getPassword(),
-                            new ArrayList<>())
-            );
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+                ObjectMapper om = new ObjectMapper();
+                JsonNode tree = om.readTree(claims.getSubject());
+                String username=tree.findValues("username").toString();
+                // 和redis中比较
+                String tokenInRedis=(String) template.opsForHash().get("token",username);
+                if(!tokenInRedis.equals(token)){
+                    try {
+                        throw new AuthorityException("token不合法",ErrorCode.INVALID_TOKEN.getCode());
+                    } catch (AuthorityException e) {
+                        e.printStackTrace();
+                    }
+                }else
+                {
+                    chain.doFilter(request, response);
+                }
+            }
         }
     }
 
-    // 用户成功登录后，这个方法会被调用，我们在这个方法里生成token
     @Override
-    protected void successfulAuthentication(HttpServletRequest req,
-                                            HttpServletResponse res,
-                                            FilterChain chain,
-                                            Authentication auth) throws IOException, ServletException {
+    public void destroy() {
 
-        String token = Jwts.builder()
-                .setSubject(((org.springframework.security.core.userdetails.User) auth.getPrincipal()).getUsername())
-                .setExpiration(new Date(System.currentTimeMillis() + 60 * 60 * 24 * 1000))
-                .signWith(SignatureAlgorithm.RS256, "MyJwtSecret")
-                .compact();
-        res.addHeader("Authorization", "Bearer " + token);
     }
-
 }

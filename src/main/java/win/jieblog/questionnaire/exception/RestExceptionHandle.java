@@ -19,4 +19,10 @@ public class RestExceptionHandle {
     public ErrorResult handleNotFoundException(NotFoundException e){
         return new ErrorResult(e.getMessage(),e.getCode());
     }
+    @ExceptionHandler(value = AuthorityException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResult handleAuthorityException(AuthorityException e){
+        return new ErrorResult(e.getMessage(),e.getCode());
+    }
 }

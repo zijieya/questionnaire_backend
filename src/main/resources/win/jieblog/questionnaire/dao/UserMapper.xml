@@ -165,4 +165,8 @@
       updatedatetime = #{updatedatetime,jdbcType=TIMESTAMP}
     where userid = #{userid,jdbcType=INTEGER}
   </update>
+  <select id="getUserByLogin" resultType="win.jieblog.questionnaire.model.entity.User">
+    select userid, userserialid,username,email,password,role,createdatetime,updatedatetime from user
+    where username=#{username} and password=#{password}
+  </select>
 </mapper>
