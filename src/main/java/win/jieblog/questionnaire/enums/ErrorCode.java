@@ -5,6 +5,7 @@ public enum ErrorCode {
     EMPTY_TOKEN(40301),
     INVALID_TOKEN(40302),
     EXPIRE_TOKEN(40303);
+
     private int code;
 
     public int getCode() {

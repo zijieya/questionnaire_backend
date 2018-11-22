@@ -52,5 +52,13 @@ public interface UserMapper {
      * @mbg.generated Thu Nov 15 15:45:15 CST 2018
      */
     int updateByPrimaryKey(User record);
+
+    /**
+     * 登录
+     * @param username
+     * @param password
+     * @return
+     */
     User getUserByLogin(@Param("username") String username,@Param("password") String password);
+    User getUserByEmailOrUsername(@Param("email") String email,@Param("username") String username);
 }

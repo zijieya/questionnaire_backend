@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -25,6 +26,7 @@ import java.util.List;
  */
 @WebFilter(urlPatterns = "/user/*")
 public class LoginFilter implements Filter  {
+    private LoggerFactory loggerFactory;
     private RedisTemplate template;
     @Autowired
     public void setTemplate(@Qualifier("redisTemplate") RedisTemplate template) {
@@ -40,20 +42,16 @@ public class LoginFilter implements Filter  {
         final HttpServletRequest req = (HttpServletRequest)request;
         final String authHeader = req.getHeader("Authorization");
         if (authHeader == null) {
-            try {
-                throw new AuthorityException("不存在token", ErrorCode.EMPTY_TOKEN.getCode());
-            } catch (AuthorityException e) {
-                e.printStackTrace();
-            }
+            req.setAttribute("message","不存在token");
+            req.setAttribute("errorCode",ErrorCode.EMPTY_TOKEN.getCode());
+            chain.doFilter(request, response);
         }
         else
         {
             if(!authHeader.startsWith("Bearer ")){
-                try {
-                    throw new AuthorityException("token不合法",ErrorCode.INVALID_TOKEN.getCode());
-                } catch (AuthorityException e) {
-                    e.printStackTrace();
-                }
+                req.setAttribute("message","token不合法");
+                req.setAttribute("errorCode",ErrorCode.INVALID_TOKEN.getCode());
+                chain.doFilter(request, response);
             }
             //进行校验
             else
@@ -63,11 +61,9 @@ public class LoginFilter implements Filter  {
                 final Claims claims = jwtHelper.parseKey(token);
                 //过期
                 if(claims.getExpiration().before(new Date(System.currentTimeMillis()))){
-                    try {
-                        throw new AuthorityException("token过期",ErrorCode.EXPIRE_TOKEN.getCode());
-                    } catch (AuthorityException e) {
-                        e.printStackTrace();
-                    }
+                    req.setAttribute("message","token过期");
+                    req.setAttribute("errorCode",ErrorCode.EXPIRE_TOKEN.getCode());
+                    chain.doFilter(request, response);
                 }
 
                 ObjectMapper om = new ObjectMapper();
@@ -76,11 +72,9 @@ public class LoginFilter implements Filter  {
                 // 和redis中比较
                 String tokenInRedis=(String) template.opsForHash().get("token",username);
                 if(!tokenInRedis.equals(token)){
-                    try {
-                        throw new AuthorityException("token不合法",ErrorCode.INVALID_TOKEN.getCode());
-                    } catch (AuthorityException e) {
-                        e.printStackTrace();
-                    }
+                    req.setAttribute("message","token不合法");
+                    req.setAttribute("errorCode",ErrorCode.INVALID_TOKEN.getCode());
+                    chain.doFilter(request, response);
                 }else
                 {
                     chain.doFilter(request, response);

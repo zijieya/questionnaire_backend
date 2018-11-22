@@ -11,6 +11,8 @@ import win.jieblog.questionnaire.exception.AuthorityException;
 import win.jieblog.questionnaire.exception.NotFoundException;
 import win.jieblog.questionnaire.model.contract.LoginRequest;
 import win.jieblog.questionnaire.model.contract.LoginResponse;
+import win.jieblog.questionnaire.model.contract.RegisterRequest;
+import win.jieblog.questionnaire.model.contract.RegisterResponse;
 import win.jieblog.questionnaire.service.UserService;
 
 import javax.servlet.http.HttpServletResponse;
@@ -35,6 +37,12 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public LoginResponse getUserByLogin(HttpServletResponse resp, @RequestBody LoginRequest request) throws NotFoundException, JsonProcessingException {
       return userService.getLogin(resp,request);
+    }
+    @ApiOperation(value = "注册",notes = "注册用户,并进行相关校验")
+    @PostMapping("/register")
+    @ResponseStatus(HttpStatus.OK)
+    public RegisterResponse regitser(RegisterRequest request) throws NotFoundException {
+        return userService.register(request);
     }
 }
 
