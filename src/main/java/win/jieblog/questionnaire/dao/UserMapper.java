@@ -3,6 +3,9 @@ package win.jieblog.questionnaire.dao;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import win.jieblog.questionnaire.model.entity.User;
+
+import java.util.List;
+
 @Mapper
 public interface UserMapper {
     /**
@@ -60,5 +63,5 @@ public interface UserMapper {
      * @return
      */
     User getUserByLogin(@Param("username") String username,@Param("password") String password);
-    User getUserByEmailOrUsername(@Param("email") String email,@Param("username") String username);
+    List<User> getUserByEmailOrUsername(@Param("email") String email, @Param("username") String username);
 }

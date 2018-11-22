@@ -2,6 +2,7 @@ package win.jieblog.questionnaire.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hibernate.validator.constraints.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +19,11 @@ import win.jieblog.questionnaire.model.contract.RegisterResponse;
 import win.jieblog.questionnaire.model.entity.User;
 import win.jieblog.questionnaire.service.UserService;
 import win.jieblog.questionnaire.utils.JwtHelper;
+import win.jieblog.questionnaire.utils.SerialsIdHelper;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -73,15 +76,16 @@ public class UserServiceImpl implements UserService {
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         //校验用户名和邮箱是否已经存在
-        User user1=userMapper.getUserByEmailOrUsername(request.getUsername(),request.getEmail());
-        if (user1==null){
+        List<User> list =userMapper.getUserByEmailOrUsername(request.getEmail(),request.getUsername());
+        if (list.size()>0){
             logger.error("已存在"+request.getEmail()+"或者"+request.getUsername());
             throw new NotFoundException("已存在此用户名或邮箱",ErrorCode.USER_NOT_FOUND.getCode());
         }
         else
         {
             user.setPassword(request.getPassword());
-            int count=userMapper.insert(user);//影响的条数
+            user.setUserserialid(SerialsIdHelper.getSerialsId());
+            int count=userMapper.insertSelective(user);//影响的条数
             logger.info("增加用户"+user.getUsername());
             response.setSuccessful(true);
         }

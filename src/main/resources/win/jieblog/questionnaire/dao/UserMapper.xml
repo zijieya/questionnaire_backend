@@ -170,7 +170,7 @@
     where username=#{username} and password=#{password}
   </select>
   <select id="getUserByEmailOrUsername" resultType="win.jieblog.questionnaire.model.entity.User">
-    select userid, userserialid,username,email,password,role,createdatetime,updatedatetime from user where 1=0
-    or username=#{username} or email=#{email}
+    select userid, userserialid,username,email,password,role,createdatetime,updatedatetime from user where
+     email=#{email} or  username=#{username} or 1=0
   </select>
 </mapper>
