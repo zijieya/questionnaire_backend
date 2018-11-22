@@ -2,6 +2,7 @@ package win.jieblog.questionnaire.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.ibatis.javassist.bytecode.stackmap.BasicBlock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class CommonServiceImpl implements CommonService {
@@ -97,6 +99,7 @@ public class CommonServiceImpl implements CommonService {
         // 验证邮箱是否存在 重用 getUserByEmailOrUsername
        List<User> list =userMapper.getUserByEmailOrUsername(request.getEmail(),null);
        if (list.size()==0){
+           logger.error("找不到邮箱"+request.getEmail());
            throw new NotFoundException("找不到该邮箱",ErrorCode.USER_NOT_FOUND.getCode());
 
        }
@@ -108,9 +111,11 @@ public class CommonServiceImpl implements CommonService {
        simpleMailMessage.setFrom(env.getProperty("spring.mail.username"));
        simpleMailMessage.setSubject("验证码");
        mailSender.send(simpleMailMessage);
+       logger.info("成功发送邮件到"+request.getEmail());
+       //验证码保存5分钟
+       template.opsForValue().set(request.getEmail(),code,5, TimeUnit.MINUTES);
        response.setEmail(request.getEmail());
        response.setSuccessful(true);
-       response.setVerificationCode(code);
        response.setUserserialid(list.get(0).getUserserialid());
        return response;
    }
