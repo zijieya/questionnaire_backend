@@ -1,5 +1,6 @@
 package win.jieblog.questionnaire.model.contract.common;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 
 public class SendMailResponse {
@@ -7,6 +8,8 @@ public class SendMailResponse {
     private String email;
     @ApiModelProperty(value = "验证码")
     private int verificationCode;
+    @ApiModelProperty(value = "用户序列号 需要在重置密码中和邮箱来唯一确认用户 阻止单独调用重置密码接口")
+    private String userserialid;
     @ApiModelProperty(value = "是否成功 true 发送成功 false 发送失败")
     private boolean isSuccessful;
 
@@ -32,5 +35,13 @@ public class SendMailResponse {
 
     public void setSuccessful(boolean successful) {
         isSuccessful = successful;
+    }
+
+    public String getUserserialid() {
+        return userserialid;
+    }
+
+    public void setUserserialid(String userserialid) {
+        this.userserialid = userserialid;
     }
 }

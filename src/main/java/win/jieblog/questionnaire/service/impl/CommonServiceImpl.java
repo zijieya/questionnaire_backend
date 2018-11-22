@@ -111,6 +111,7 @@ public class CommonServiceImpl implements CommonService {
        response.setEmail(request.getEmail());
        response.setSuccessful(true);
        response.setVerificationCode(code);
+       response.setUserserialid(list.get(0).getUserserialid());
        return response;
    }
 }
