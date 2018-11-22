@@ -18,10 +18,10 @@ import win.jieblog.questionnaire.service.UserService;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 用户操作
+ * 存放一些公共操作
  */
 @RestController
-public class UserController {
+public class CommonController {
     @Autowired
     UserDetailsService userDetailsService;
     @Autowired
