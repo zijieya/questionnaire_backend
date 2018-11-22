@@ -4,16 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
-import win.jieblog.questionnaire.exception.AuthorityException;
 import win.jieblog.questionnaire.exception.NotFoundException;
-import win.jieblog.questionnaire.model.contract.LoginRequest;
-import win.jieblog.questionnaire.model.contract.LoginResponse;
-import win.jieblog.questionnaire.model.contract.RegisterRequest;
-import win.jieblog.questionnaire.model.contract.RegisterResponse;
-import win.jieblog.questionnaire.service.UserService;
+import win.jieblog.questionnaire.model.contract.common.*;
+import win.jieblog.questionnaire.service.CommonService;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,7 +20,7 @@ public class CommonController {
     @Autowired
     UserDetailsService userDetailsService;
     @Autowired
-    UserService userService;
+    CommonService commonService;
     /**
      * 登录
      *
@@ -36,13 +31,26 @@ public class CommonController {
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
     public LoginResponse getUserByLogin(HttpServletResponse resp, @RequestBody LoginRequest request) throws NotFoundException, JsonProcessingException {
-      return userService.getLogin(resp,request);
+      return commonService.getLogin(resp,request);
     }
+
+    /**
+     * 注册
+     * @param request
+     * @return
+     * @throws NotFoundException
+     */
     @ApiOperation(value = "注册",notes = "注册用户,并进行相关校验")
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.OK)
     public RegisterResponse regitser(RegisterRequest request) throws NotFoundException {
-        return userService.register(request);
+        return commonService.register(request);
+    }
+    @ApiOperation(value = "发送验证码",notes = "发送验证码")
+    @PostMapping("/verificationCode")
+    @ResponseStatus(HttpStatus.OK)
+    public SendMailResponse sendMail(SendMailRequest request) throws NotFoundException{
+        return commonService.sendMail(request);
     }
 }
 

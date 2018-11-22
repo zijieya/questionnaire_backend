@@ -2,22 +2,21 @@ package win.jieblog.questionnaire.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hibernate.validator.constraints.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import win.jieblog.questionnaire.dao.UserMapper;
 import win.jieblog.questionnaire.enums.ErrorCode;
 import win.jieblog.questionnaire.exception.NotFoundException;
-import win.jieblog.questionnaire.model.contract.LoginRequest;
-import win.jieblog.questionnaire.model.contract.LoginResponse;
-import win.jieblog.questionnaire.model.contract.RegisterRequest;
-import win.jieblog.questionnaire.model.contract.RegisterResponse;
+import win.jieblog.questionnaire.model.contract.common.*;
 import win.jieblog.questionnaire.model.entity.User;
-import win.jieblog.questionnaire.service.UserService;
+import win.jieblog.questionnaire.service.CommonService;
 import win.jieblog.questionnaire.utils.JwtHelper;
 import win.jieblog.questionnaire.utils.SerialsIdHelper;
 
@@ -25,18 +24,21 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class CommonServiceImpl implements CommonService {
     private final static long ttlTime=60*1000*60;//token的有效期为一小时
     private static ObjectMapper MAPPER = new ObjectMapper();
-    Logger logger=LoggerFactory.getLogger(UserServiceImpl.class);
+    Logger logger=LoggerFactory.getLogger(CommonServiceImpl.class);
     @Autowired
     @Qualifier("redisTemplate")
     private RedisTemplate template;
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    MailSender mailSender;
+    @Autowired
+    private Environment env;
     /**
      *
      * @param resp httpservlet
@@ -46,7 +48,7 @@ public class UserServiceImpl implements UserService {
      * @throws JsonProcessingException
      */
     @Override
-    public LoginResponse getLogin(HttpServletResponse resp,LoginRequest request) throws NotFoundException, JsonProcessingException {
+    public LoginResponse getLogin(HttpServletResponse resp, LoginRequest request) throws NotFoundException, JsonProcessingException {
         JwtHelper jwtHelper=new JwtHelper();
         User user=userMapper.getUserByLogin(request.getUsername(),request.getPassword());
         LoginResponse response=new LoginResponse();
@@ -91,4 +93,24 @@ public class UserServiceImpl implements UserService {
         }
         return response;
     }
+   public SendMailResponse sendMail(SendMailRequest request) throws NotFoundException {
+        // 验证邮箱是否存在 重用 getUserByEmailOrUsername
+       List<User> list =userMapper.getUserByEmailOrUsername(request.getEmail(),null);
+       if (list.size()==0){
+           throw new NotFoundException("找不到该邮箱",ErrorCode.USER_NOT_FOUND.getCode());
+
+       }
+       int code=(int)((Math.random()*9+1)*100000);
+        SendMailResponse response=new SendMailResponse();
+       SimpleMailMessage simpleMailMessage=new SimpleMailMessage();
+       simpleMailMessage.setTo(request.getEmail());
+       simpleMailMessage.setText("验证码为"+(int)((Math.random()*9+1)*100000));
+       simpleMailMessage.setFrom(env.getProperty("spring.mail.username"));
+       simpleMailMessage.setSubject("验证码");
+       mailSender.send(simpleMailMessage);
+       response.setEmail(request.getEmail());
+       response.setSuccessful(true);
+       response.setVerificationCode(code);
+       return response;
+   }
 }

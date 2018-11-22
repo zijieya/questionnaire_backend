@@ -1,4 +1,4 @@
-package win.jieblog.questionnaire.model.contract;
+package win.jieblog.questionnaire.model.contract.common;
 
 import io.swagger.annotations.ApiModelProperty;
 
