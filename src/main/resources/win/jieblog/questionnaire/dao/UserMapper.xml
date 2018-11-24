@@ -125,9 +125,6 @@
     -->
     update user
     <set>
-      <if test="userserialid != null">
-        userserialid = #{userserialid,jdbcType=VARCHAR},
-      </if>
       <if test="username != null">
         username = #{username,jdbcType=VARCHAR},
       </if>
@@ -147,7 +144,7 @@
         updatedatetime = #{updatedatetime,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where userid = #{userid,jdbcType=INTEGER}
+    where userserialid = #{userserialid,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="win.jieblog.questionnaire.model.entity.User">
     <!--

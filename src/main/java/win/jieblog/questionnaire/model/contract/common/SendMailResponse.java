@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 public class SendMailResponse {
     @ApiModelProperty(value = "邮箱")
     private String email;
-    @ApiModelProperty(value = "验证码")
+    @ApiModelProperty(value = "用户序列号")
     private String userserialid;
     @ApiModelProperty(value = "是否成功 true 发送成功 false 发送失败")
     private boolean isSuccessful;

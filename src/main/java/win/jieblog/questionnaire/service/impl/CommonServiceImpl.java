@@ -14,6 +14,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import win.jieblog.questionnaire.dao.UserMapper;
 import win.jieblog.questionnaire.enums.ErrorCode;
+import win.jieblog.questionnaire.exception.DataBaseErrorException;
 import win.jieblog.questionnaire.exception.NotFoundException;
 import win.jieblog.questionnaire.model.contract.common.*;
 import win.jieblog.questionnaire.model.entity.User;
@@ -73,6 +74,13 @@ public class CommonServiceImpl implements CommonService {
         }
         return response;
     }
+
+    /**
+     * 注册用户
+     * @param request
+     * @return
+     * @throws NotFoundException
+     */
     public RegisterResponse register(RegisterRequest request) throws NotFoundException{
         RegisterResponse response=new RegisterResponse();
         // contract转entity
@@ -95,6 +103,13 @@ public class CommonServiceImpl implements CommonService {
         }
         return response;
     }
+
+    /**
+     * 发送验证码
+     * @param request
+     * @return
+     * @throws NotFoundException
+     */
    public SendMailResponse sendMail(SendMailRequest request) throws NotFoundException {
         // 验证邮箱是否存在 重用 getUserByEmailOrUsername
        List<User> list =userMapper.getUserByEmailOrUsername(request.getEmail(),null);
@@ -107,16 +122,59 @@ public class CommonServiceImpl implements CommonService {
         SendMailResponse response=new SendMailResponse();
        SimpleMailMessage simpleMailMessage=new SimpleMailMessage();
        simpleMailMessage.setTo(request.getEmail());
-       simpleMailMessage.setText("验证码为"+(int)((Math.random()*9+1)*100000));
+       simpleMailMessage.setText("验证码为"+code+"(有效期5分钟)");
        simpleMailMessage.setFrom(env.getProperty("spring.mail.username"));
        simpleMailMessage.setSubject("验证码");
        mailSender.send(simpleMailMessage);
        logger.info("成功发送邮件到"+request.getEmail());
        //验证码保存5分钟
-       template.opsForValue().set(request.getEmail(),code,5, TimeUnit.MINUTES);
+       template.opsForValue().set(list.get(0).getUserserialid(),code,5, TimeUnit.MINUTES);
        response.setEmail(request.getEmail());
        response.setSuccessful(true);
        response.setUserserialid(list.get(0).getUserserialid());
        return response;
    }
+
+    /**
+     * 验证码校验
+     * @param request
+     * @return
+     * @throws NotFoundException
+     */
+   public ActiveCodeResponse activeCode(ActiveCodeRequest request) throws NotFoundException{
+        ActiveCodeResponse response=new ActiveCodeResponse();
+        Integer code= (Integer) template.opsForValue().get(request.getUserserialid());
+        logger.info("从redis中查找"+request.getUserserialid()+"的验证码");
+        if (code==null){
+            throw new NotFoundException("验证码失效",ErrorCode.ACTIVECODE_NOT_FOUND.getCode());
+        }
+        if (code!=request.getVerificationCode()){
+            logger.error(request.getUserserialid()+"验证码错误");
+            throw new NotFoundException("验证码错误",ErrorCode.ACTIVECODE_NOT_FOUND.getCode());
+        }
+        response.setSuccessful(true);
+        response.setUserserialid(request.getUserserialid());
+        logger.info(request.getUserserialid()+"验证码校验成功");
+        return response;
+    }
+
+    /**
+     * 重置密码
+     * @param request
+     * @return
+     * @throws DataBaseErrorException
+     */
+    @Override
+    public ResetPasswordResponse resetPassword(ResetPasswordRequest request) throws DataBaseErrorException {
+       ResetPasswordResponse response=new ResetPasswordResponse();
+       User user=new User();
+       user.setUserserialid(request.getUserserialid());
+       user.setPassword(request.getPassword());
+       int count=userMapper.updateByPrimaryKeySelective(user);
+       if (count!=1){
+           throw new DataBaseErrorException("更新异常",ErrorCode.UPDATE_ERROR.getCode());
+       }
+       response.setSuccessful(true);
+       return response;
+    }
 }

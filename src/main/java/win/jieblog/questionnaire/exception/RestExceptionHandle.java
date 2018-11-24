@@ -25,4 +25,10 @@ public class RestExceptionHandle {
     public ErrorResult handleAuthorityException(AuthorityException e){
         return new ErrorResult(e.getMessage(),e.getCode());
     }
+    @ExceptionHandler(value = DataBaseErrorException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_GATEWAY)
+    public ErrorResult handleDataBaseErrorException(DataBaseErrorException e){
+        return new ErrorResult(e.getMessage(),e.getCode());
+    }
 }
