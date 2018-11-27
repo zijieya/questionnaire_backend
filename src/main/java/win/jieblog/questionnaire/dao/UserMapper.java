@@ -2,6 +2,8 @@ package win.jieblog.questionnaire.dao;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.security.core.parameters.P;
+import win.jieblog.questionnaire.model.dto.GetUsernameByUserserialId;
 import win.jieblog.questionnaire.model.entity.User;
 
 import java.util.List;
@@ -64,4 +66,5 @@ public interface UserMapper {
      */
     User getUserByLogin(@Param("username") String username,@Param("password") String password);
     List<User> getUserByEmailOrUsername(@Param("email") String email, @Param("username") String username);
+    List<GetUsernameByUserserialId> selectusernameByuserserialId(@Param("list") List<String> list);
 }

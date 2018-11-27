@@ -20,6 +20,10 @@ public class Question {
      * @mbg.generated Thu Nov 15 15:45:15 CST 2018
      */
     private String surveyserialid;
+    /**
+     * 问题
+     */
+    private String questionname;
 
     /**
      *
@@ -628,5 +632,13 @@ public class Question {
      */
     public void setUpdatedatetime(Date updatedatetime) {
         this.updatedatetime = updatedatetime;
+    }
+
+    public String getQuestionname() {
+        return questionname;
+    }
+
+    public void setQuestionname(String questionname) {
+        this.questionname = questionname;
     }
 }

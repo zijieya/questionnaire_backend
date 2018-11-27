@@ -6,6 +6,7 @@ public enum ErrorCode {
     EMPTY_TOKEN(40301),
     INVALID_TOKEN(40302),
     EXPIRE_TOKEN(40303),
+    ERROR_TOKEN(40304),
     UPDATE_ERROR(50001);
 
     private int code;

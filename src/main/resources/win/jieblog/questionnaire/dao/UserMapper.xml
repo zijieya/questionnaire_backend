@@ -170,4 +170,17 @@
     select userid, userserialid,username,email,password,role,createdatetime,updatedatetime from user where
      email=#{email} or  username=#{username} or 1=0
   </select>
+  <select id="selectusernameByuserserialId" resultType="win.jieblog.questionnaire.model.dto.GetUsernameByUserserialId">
+    select userserialid,username
+    from user
+    where userserialid in
+    <if test="list.size>0">
+      <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    <if test="list.size==0">
+      (-1)
+    </if>
+  </select>
 </mapper>

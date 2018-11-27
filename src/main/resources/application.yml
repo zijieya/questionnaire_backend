@@ -8,6 +8,7 @@ spring:
     url: "jdbc:mysql://173.82.232.134:3306/questionnaire"
   redis:
     host: "173.82.232.134"
+    password: "123456"
   mail:
     host: "smtp.exmail.qq.com"
     password: "123456aA"

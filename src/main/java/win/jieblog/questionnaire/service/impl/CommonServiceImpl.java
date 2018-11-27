@@ -70,6 +70,7 @@ public class CommonServiceImpl implements CommonService {
             resp.setHeader("Authorization","Bearer "+token);
             //存入 redis
             template.opsForHash().put("token",request.getUsername(),token);
+
             logger.info("存入"+user.getUsername()+"token到redis");
         }
         return response;

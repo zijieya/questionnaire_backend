@@ -179,4 +179,16 @@
       updatedatetime = #{updatedatetime,jdbcType=TIMESTAMP}
     where serveyid = #{serveyid,jdbcType=INTEGER}
   </update>
+  <select id="selectByTagOrTitle" resultMap="BaseResultMap">
+      select
+      <include refid="Base_Column_List" />
+      from servey
+      where title like CONCAT(#{keyword},'%') or tag like CONCAT(#{keyword},'%')
+  </select>
+  <select id="selectBySerialid" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from servey
+    where surveyserialid = #{surveyserialid,jdbcType=VARCHAR}
+  </select>
 </mapper>

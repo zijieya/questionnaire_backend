@@ -12,7 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication(scanBasePackages = "win.jieblog.questionnaire")
 @MapperScan(value = "win.jieblog.questionnaire.dao")
-@ServletComponentScan(value = "win.jieblog.questionnaire.filter")
+@ServletComponentScan(basePackages = {"win.jieblog.questionnaire.filter"})
 public class QuestionnaireApplication {
 
     public static void main(String[] args) {

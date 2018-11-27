@@ -11,6 +11,8 @@ import win.jieblog.questionnaire.exception.NotFoundException;
 import win.jieblog.questionnaire.model.contract.common.*;
 import win.jieblog.questionnaire.service.CommonService;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**

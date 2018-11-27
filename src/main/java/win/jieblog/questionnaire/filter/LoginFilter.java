@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,6 +13,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import win.jieblog.questionnaire.enums.ErrorCode;
 import win.jieblog.questionnaire.exception.AuthorityException;
+import win.jieblog.questionnaire.service.impl.CommonServiceImpl;
 import win.jieblog.questionnaire.utils.JwtHelper;
 
 import javax.servlet.*;
@@ -26,8 +28,9 @@ import java.util.List;
  */
 @WebFilter(urlPatterns = "/user/*")
 public class LoginFilter implements Filter  {
-    private LoggerFactory loggerFactory;
     private RedisTemplate template;
+    Logger logger= LoggerFactory.getLogger(LoginFilter.class);
+
     @Autowired
     public void setTemplate(@Qualifier("redisTemplate") RedisTemplate template) {
         this.template = template;
@@ -42,16 +45,20 @@ public class LoginFilter implements Filter  {
         final HttpServletRequest req = (HttpServletRequest)request;
         final String authHeader = req.getHeader("Authorization");
         if (authHeader == null) {
-            req.setAttribute("message","不存在token");
-            req.setAttribute("errorCode",ErrorCode.EMPTY_TOKEN.getCode());
-            chain.doFilter(request, response);
+            try {
+                throw new AuthorityException("不存在token", ErrorCode.EMPTY_TOKEN.getCode());
+            } catch (AuthorityException e) {
+                logger.error(e.getCode()+e.getMessage());
+            }
         }
         else
         {
             if(!authHeader.startsWith("Bearer ")){
-                req.setAttribute("message","token不合法");
-                req.setAttribute("errorCode",ErrorCode.INVALID_TOKEN.getCode());
-                chain.doFilter(request, response);
+                try {
+                    throw new AuthorityException("token不合法",ErrorCode.INVALID_TOKEN.getCode());
+                } catch (AuthorityException e) {
+                    logger.error(e.getCode()+e.getMessage());
+                }
             }
             //进行校验
             else
@@ -61,20 +68,26 @@ public class LoginFilter implements Filter  {
                 final Claims claims = jwtHelper.parseKey(token);
                 //过期
                 if(claims.getExpiration().before(new Date(System.currentTimeMillis()))){
-                    req.setAttribute("message","token过期");
-                    req.setAttribute("errorCode",ErrorCode.EXPIRE_TOKEN.getCode());
-                    chain.doFilter(request, response);
+                    try {
+                        throw new AuthorityException("token过期",ErrorCode.EXPIRE_TOKEN.getCode());
+                    } catch (AuthorityException e) {
+                        logger.error(e.getCode()+e.getMessage());
+                    }
                 }
 
                 ObjectMapper om = new ObjectMapper();
                 JsonNode tree = om.readTree(claims.getSubject());
-                String username=tree.findValues("username").toString();
+                String username=tree.findValues("username").get(0).toString().replace("\"","");
                 // 和redis中比较
                 String tokenInRedis=(String) template.opsForHash().get("token",username);
+                logger.info("redis中的token"+tokenInRedis);
+                logger.info(username);
                 if(!tokenInRedis.equals(token)){
-                    req.setAttribute("message","token不合法");
-                    req.setAttribute("errorCode",ErrorCode.INVALID_TOKEN.getCode());
-                    chain.doFilter(request, response);
+                    try {
+                        throw new AuthorityException("token不合法",ErrorCode.INVALID_TOKEN.getCode());
+                    } catch (AuthorityException e) {
+                        logger.error(e.getCode()+e.getMessage());
+                    }
                 }else
                 {
                     chain.doFilter(request, response);
