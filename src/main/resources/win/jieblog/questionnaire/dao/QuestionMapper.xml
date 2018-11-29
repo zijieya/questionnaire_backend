@@ -313,4 +313,33 @@
     from question
     where surveyserialid = #{serveyserialid}
   </select>
+  <insert id="batchInsert">
+    insert into question(surveyserialid,questionname, answerA,
+    answerB, answerC, answerD,
+    answerE, answerF, answerG,
+  remark) values
+    <foreach collection="questionList" item="item" index="index" separator=",">
+      <trim prefix=" (" suffix=")" suffixOverrides=",">
+          #{item.surveyserialid,jdbcType=VARCHAR}
+        ,
+          #{item.questionname,jdbcType=VARCHAR}
+        ,
+          #{item.answera,jdbcType=VARCHAR}
+        ,
+          #{item.answerb,jdbcType=VARCHAR}
+        ,
+          #{item.answerc,jdbcType=VARCHAR}
+        ,
+          #{item.answerd,jdbcType=VARCHAR}
+        ,
+          #{item.answere,jdbcType=VARCHAR}
+        ,
+          #{item.answerf,jdbcType=VARCHAR}
+        ,
+          #{item.answerg,jdbcType=VARCHAR}
+        ,
+          #{item.remark,jdbcType=VARCHAR}
+      </trim>
+    </foreach>
+  </insert>
 </mapper>

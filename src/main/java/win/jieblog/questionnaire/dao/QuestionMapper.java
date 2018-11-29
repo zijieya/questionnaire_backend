@@ -56,4 +56,5 @@ public interface QuestionMapper {
      */
     int updateByPrimaryKey(Question record);
     List<Question> selectByServeyserialid(@Param("serveyserialid") String serveyserialid);
+    int batchInsert(@Param("questionList") List<Question> questionList);
 }

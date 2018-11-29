@@ -1,24 +1,31 @@
 package win.jieblog.questionnaire.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import win.jieblog.questionnaire.dao.QuestionMapper;
 import win.jieblog.questionnaire.dao.ServeyMapper;
 import win.jieblog.questionnaire.dao.UserMapper;
 import win.jieblog.questionnaire.enums.ErrorCode;
 import win.jieblog.questionnaire.exception.AuthorityException;
+import win.jieblog.questionnaire.exception.DataBaseErrorException;
 import win.jieblog.questionnaire.model.contract.user.*;
 import win.jieblog.questionnaire.model.dto.GetUsernameByUserserialId;
 import win.jieblog.questionnaire.model.entity.Question;
 import win.jieblog.questionnaire.model.entity.Servey;
 import win.jieblog.questionnaire.service.UserService;
+import win.jieblog.questionnaire.utils.SerialsIdHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
+    Logger logger= LoggerFactory.getLogger(UserServiceImpl.class);
+
     @Autowired
     ServeyMapper serveyMapper;
     @Autowired
@@ -63,6 +70,11 @@ public class UserServiceImpl implements UserService {
         return response;
     }
 
+    /**
+     * 问卷详情
+     * @param request
+     * @return
+     */
     @Override
     public ServeyDetailResponse serveyDetail(ServeyDetailRequest request) {
         ServeyDetailResponse response=new ServeyDetailResponse();
@@ -100,6 +112,50 @@ public class UserServiceImpl implements UserService {
             }
         }
      response.setList(questionItemList);
+        return response;
+    }
+
+    /**
+     * 生成问卷
+     * @param request
+     * @return
+     */
+    @Transactional
+    @Override
+    public GenerateServeyResponse generateServey(GenerateServeyRequest request) throws DataBaseErrorException {
+        String serveySerialId=SerialsIdHelper.getSerialsId();
+        GenerateServeyResponse response=new GenerateServeyResponse();
+        // 插入servey表
+        Servey servey=new Servey();
+        servey.setCreatorserialid(request.getCreatorserialId());
+        servey.setRemark(request.getRemark());
+        servey.setSurveyserialid(serveySerialId);
+        servey.setTag(request.getTag());
+        servey.setTitle(request.getTitle());
+        int total=serveyMapper.insertSelective(servey);
+        List<QuestionInGeneration> list=request.getList();
+        List<Question> questionList=new ArrayList<>();
+        for (QuestionInGeneration questionInGeneration:list){
+            Question question=new Question();
+            question.setAnswera(questionInGeneration.getAnswerA());
+            question.setAnswerb(questionInGeneration.getAnswerB());
+            question.setAnswerc(questionInGeneration.getAnswerC());
+            question.setAnswerd(questionInGeneration.getAnswerD());
+            question.setAnswere(questionInGeneration.getAnswerE());
+            question.setAnswerf(questionInGeneration.getAnswerF());
+            question.setAnswerg(questionInGeneration.getAnswerG());
+            question.setSurveyserialid(serveySerialId);
+            question.setQuestionname(questionInGeneration.getQuestionname());
+            question.setRemark(questionInGeneration.getRemark());
+            questionList.add(question);
+        }
+        int total2=questionMapper.batchInsert(questionList);
+        if (total!=1){
+            logger.error("增加问卷异常");
+            throw new DataBaseErrorException("插入异常",ErrorCode.INSERT_ERROR.getCode());
+        }
+        response.setSuccessful(true);
+        logger.info("成功添加问卷");
         return response;
     }
 }

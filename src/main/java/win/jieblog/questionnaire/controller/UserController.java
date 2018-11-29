@@ -1,5 +1,6 @@
 package win.jieblog.questionnaire.controller;
 
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.annotation.FilteredEndpoint;
@@ -7,10 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import win.jieblog.questionnaire.enums.ErrorCode;
 import win.jieblog.questionnaire.exception.AuthorityException;
-import win.jieblog.questionnaire.model.contract.user.GlobalSearchForUserRequest;
-import win.jieblog.questionnaire.model.contract.user.GlobalSearchForUserResponse;
-import win.jieblog.questionnaire.model.contract.user.ServeyDetailRequest;
-import win.jieblog.questionnaire.model.contract.user.ServeyDetailResponse;
+import win.jieblog.questionnaire.exception.DataBaseErrorException;
+import win.jieblog.questionnaire.model.contract.user.*;
 import win.jieblog.questionnaire.service.UserService;
 
 import javax.servlet.ServletRequest;
@@ -40,5 +39,11 @@ public class UserController {
         ServeyDetailRequest request=new ServeyDetailRequest();
         request.setSurveyserialid(surveyserialid);
         return userService.serveyDetail(request);
+    }
+    @ApiModelProperty(value = "生成问卷")
+    @PostMapping(value = "/generateServey")
+    @ResponseStatus(HttpStatus.OK)
+    public GenerateServeyResponse generateServey(@RequestBody GenerateServeyRequest request) throws DataBaseErrorException {
+        return userService.generateServey(request);
     }
 }
