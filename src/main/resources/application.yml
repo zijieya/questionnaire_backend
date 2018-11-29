@@ -3,17 +3,17 @@ logging:
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    password: "eZi8V5E07aoARvy0"
+    password: ${questionnaire_datasource_password}
     username: "questionnaire"
-    url: "jdbc:mysql://173.82.232.134:3306/questionnaire"
+    url: ${questionnaire_datasource_url}
   redis:
-    host: "173.82.232.134"
-    password: "123456"
+    host: ${questionnaire_redis_host}
+    password: ${questionnaire_redis_password}
   mail:
-    host: "smtp.exmail.qq.com"
-    password: "123456aA"
-    username: "questionnaire@jieblog.cn"
-    port: 465
+    host: ${questionnaire_mail_host}
+    password: ${questionnaire_mail_password}
+    username: ${questionnaire_mail_username}
+    port: ${questionnaire_mail_port}
     protocol: smtp
     test-connection: true
     properties: {"mail.smtp.socketFactory.class":"javax.net.ssl.SSLSocketFactory"}
