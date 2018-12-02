@@ -62,4 +62,5 @@ public interface ServeyMapper {
      */
     List<Servey> selectByTagOrTitle(@Param("keyword") String keyword);
     Servey selectBySerialid(@Param("surveyserialid") String surveyserialid);
+    int updateBySerialId(Servey  servey);
 }

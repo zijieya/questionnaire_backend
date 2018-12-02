@@ -1,8 +1,9 @@
 package win.jieblog.questionnaire.model.contract.common;
 
 import io.swagger.annotations.ApiModelProperty;
+import win.jieblog.questionnaire.model.contract.BaseResponse;
 
-public class RegisterResponse {
+public class RegisterResponse  extends BaseResponse {
     @ApiModelProperty(value = "是否注册成功 true 成功 false 失败")
     private boolean isSuccessful;
 

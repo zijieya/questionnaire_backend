@@ -191,4 +191,15 @@
     from servey
     where surveyserialid = #{surveyserialid,jdbcType=VARCHAR}
   </select>
+  <update id="updateBySerialId">
+    update servey
+    set creatorserialId = #{creatorserialid,jdbcType=VARCHAR},
+        title = #{title,jdbcType=VARCHAR},
+        tag = #{tag,jdbcType=VARCHAR},
+        remark = #{remark,jdbcType=VARCHAR},
+        total = #{total,jdbcType=INTEGER},
+        createdatetime = #{createdatetime,jdbcType=TIMESTAMP},
+        updatedatetime = #{updatedatetime,jdbcType=TIMESTAMP}
+    where surveyserialid = #{surveyserialid,jdbcType=INTEGER}
+  </update>
 </mapper>

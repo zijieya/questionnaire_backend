@@ -46,4 +46,10 @@ public class UserController {
     public GenerateServeyResponse generateServey(@RequestBody GenerateServeyRequest request) throws DataBaseErrorException {
         return userService.generateServey(request);
     }
+    @ApiModelProperty(value = "提交问卷")
+    @PostMapping(value = "/submitServey")
+    @ResponseStatus(HttpStatus.OK)
+    public SubmitServeyResponse submitServey(SubmitServeyRequest request){
+        return userService.submitServey(request);
+    }
 }

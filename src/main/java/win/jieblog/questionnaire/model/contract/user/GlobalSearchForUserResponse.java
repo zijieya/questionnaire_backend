@@ -1,8 +1,10 @@
 package win.jieblog.questionnaire.model.contract.user;
 
+import win.jieblog.questionnaire.model.contract.BaseResponse;
+
 import java.util.List;
 
-public class GlobalSearchForUserResponse {
+public class GlobalSearchForUserResponse extends BaseResponse {
  private List<ServeyItem> list;
 
     public List<ServeyItem> getList() {

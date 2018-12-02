@@ -342,4 +342,48 @@
       </trim>
     </foreach>
   </insert>
+  <update id="batchUpdateCount">
+    update question
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="answerAcount =case" suffix="end,">
+        <foreach collection="list" item="item" index="index">
+          when questionid=#{item.questionid} then #{item.answerAcount}
+        </foreach>
+      </trim>
+      <trim prefix="answerBcount =case" suffix="end,">
+        <foreach collection="list" item="item" index="index">
+          when questionid=#{item.questionid} then #{item.answerBcount}
+        </foreach>
+      </trim>
+      <trim prefix="answerCcount =case" suffix="end,">
+        <foreach collection="list" item="item" index="index">
+          when questionid=#{item.questionid} then #{item.answerCcount}
+        </foreach>
+      </trim>
+      <trim prefix="answerDcount =case" suffix="end,">
+        <foreach collection="list" item="item" index="index">
+          when questionid=#{item.questionid} then #{item.answerDcount}
+        </foreach>
+      </trim>
+      <trim prefix="answerEcount =case" suffix="end,">
+        <foreach collection="list" item="item" index="index">
+          when questionid=#{item.questionid} then #{item.answerEcount}
+        </foreach>
+      </trim>
+      <trim prefix="answerFcount =case" suffix="end,">
+        <foreach collection="list" item="item" index="index">
+          when questionid=#{item.questionid} then #{item.answerFcount}
+        </foreach>
+      </trim>
+      <trim prefix="answerGcount =case" suffix="end,">
+        <foreach collection="list" item="item" index="index">
+          when questionid=#{item.questionid} then #{item.answerGcount}
+        </foreach>
+      </trim>
+    </trim>
+    where questionid in
+    <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+      #{item.questionid}
+    </foreach>
+  </update>
 </mapper>

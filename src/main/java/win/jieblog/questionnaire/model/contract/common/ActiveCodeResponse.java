@@ -1,13 +1,11 @@
 package win.jieblog.questionnaire.model.contract.common;
 
 import io.swagger.annotations.ApiModelProperty;
+import win.jieblog.questionnaire.model.contract.BaseResponse;
 
-public class ActiveCodeResponse {
+public class ActiveCodeResponse extends BaseResponse {
     @ApiModelProperty(value = "用户序列号")
     private String userserialid;
-    @ApiModelProperty(value = "验证是否成功")
-    private boolean isSuccessful;
-
     public String getUserserialid() {
         return userserialid;
     }
@@ -16,11 +14,4 @@ public class ActiveCodeResponse {
         this.userserialid = userserialid;
     }
 
-    public boolean isSuccessful() {
-        return isSuccessful;
-    }
-
-    public void setSuccessful(boolean successful) {
-        isSuccessful = successful;
-    }
 }

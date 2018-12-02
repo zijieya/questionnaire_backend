@@ -1,16 +1,8 @@
 package win.jieblog.questionnaire.model.contract.common;
 
 import io.swagger.annotations.ApiModelProperty;
+import win.jieblog.questionnaire.model.contract.BaseResponse;
 
-public class LoginResponse {
-    @ApiModelProperty(value = "是否登录成功 true 成功 false 失败")
-    private boolean isSuccessful;
+public class LoginResponse extends BaseResponse {
 
-    public boolean isSuccessful() {
-        return isSuccessful;
-    }
-
-    public void setSuccessful(boolean successful) {
-        isSuccessful = successful;
-    }
 }

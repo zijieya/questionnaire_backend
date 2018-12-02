@@ -55,6 +55,19 @@ public interface QuestionMapper {
      * @mbg.generated Thu Nov 15 15:45:15 CST 2018
      */
     int updateByPrimaryKey(Question record);
+
+    /**
+     * 批量插入
+     * @param serveyserialid
+     * @return
+     */
     List<Question> selectByServeyserialid(@Param("serveyserialid") String serveyserialid);
     int batchInsert(@Param("questionList") List<Question> questionList);
+
+    /**
+     * 批量更新答案数目
+     * @param questionList
+     * @return
+     */
+    int batchUpdateCount(@Param("questionList") List<Question> questionList);
 }

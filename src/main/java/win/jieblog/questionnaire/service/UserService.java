@@ -8,4 +8,5 @@ public interface UserService {
     GlobalSearchForUserResponse globalSearchForUser(GlobalSearchForUserRequest request) ;
     ServeyDetailResponse serveyDetail(ServeyDetailRequest request);
     GenerateServeyResponse generateServey(GenerateServeyRequest request) throws DataBaseErrorException;
+    SubmitServeyResponse submitServey(SubmitServeyRequest request);
 }
