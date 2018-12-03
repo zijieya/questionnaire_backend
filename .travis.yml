@@ -10,6 +10,7 @@ before_install:
   - mysql -e 'use questionnaire source src/main/resources/sqlresource/questionnaire_servey.sql'
   - mysql -e 'use questionnaire source src/main/resources/sqlresource/questionnaire_serveyResult.sql'
   - mysql -e 'use questionnaire source src/main/resources/sqlresource/questionnaire_user.sql'
+  - chmod +x gradlew
 install:
   - ./gradlew assemble
 script:
