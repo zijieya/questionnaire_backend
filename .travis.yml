@@ -11,9 +11,6 @@ before_install:
   - mysql -e 'use questionnaire source src/main/resources/sqlresource/questionnaire_serveyResult.sql'
   - mysql -e 'use questionnaire source src/main/resources/sqlresource/questionnaire_user.sql'
 install:
-  - wget "https://services.gradle.org/distributions/gradle-5.0-bin.zip"
-  - unzip -d /opt/gradle gradle-5.0-bin.zip
-  - export PATH=$PATH:/opt/gradle/gradle-5.0/bin
-  - gradle assemble
+  - ./gradlew assemble
 script:
   - gradle check
