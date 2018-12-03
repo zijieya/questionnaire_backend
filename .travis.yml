@@ -6,6 +6,7 @@ services:
   - mysql
 before_install:
   - mysql -e 'CREATE DATABASE questionnaire'
+  - mysql -e 'use questionnaire'
   - mysql -e 'source src/main/resources/sqlresource/questionnaire_question.sql'
   - mysql -e 'source src/main/resources/sqlresource/questionnaire_servey.sql'
   - mysql -e 'source src/main/resources/sqlresource/questionnaire_serveyResult.sql'
