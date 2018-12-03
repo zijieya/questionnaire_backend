@@ -6,7 +6,10 @@ services:
   - mysql
 before_install:
   - mysql -e 'CREATE DATABASE questionnaire'
-  - mysql -e 'source src/main/resources/sqlresource/*sql'
+  - mysql -e 'source src/main/resources/sqlresource/questionnaire_question.sql'
+  - mysql -e 'source src/main/resources/sqlresource/questionnaire_servey.sql'
+  - mysql -e 'source src/main/resources/sqlresource/questionnaire_serveyResult.sql'
+  - mysql -e 'source src/main/resources/sqlresource/questionnaire_user.sql'
 script:
   - gradle assemble
   - gradle check
