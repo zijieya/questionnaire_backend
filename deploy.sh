@@ -8,6 +8,7 @@ EOF
 scp build/libs/*.war  $testserver:/www/wwwroot/questionnairetest_jieblog_win/
 #运行
 ssh  $testserver << EOF
+cd /www/wwwroot/questionnairetest_jieblog_win
  jar -xf *.war
 sudo service tomcat stop
  sudo service tomcat start
