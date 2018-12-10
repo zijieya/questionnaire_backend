@@ -5,10 +5,10 @@ ssh  $testserver <<EOF
   rm -rf *
 EOF
 #复制文件
-scp build/libs/*.war  $testserver:~/web/test/
+scp build/libs/*.war  $testserver:www/wwwroot/questionnairetest_jieblog_win/
 #运行
 ssh  $testserver << EOF
  jar -xf *.war
- service tomcat stop
- service tomcat start
+sudo service tomcat stop
+ sudo service tomcat start
 EOF
