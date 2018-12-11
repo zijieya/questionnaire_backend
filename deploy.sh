@@ -3,7 +3,7 @@
 scp clean.sh $testserver:/www/wwwroot/questionnairetest_jieblog_win/
 #执行clean脚本
 ssh  $testserver <<EOF
- cd  ~/web/test
+ cd  /www/wwwroot/questionnairetest_jieblog_win
   chmod +x clean.sh
   ./clean.sh
 EOF
