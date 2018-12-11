@@ -11,7 +11,7 @@ pipeline {
         stage('build') {
             steps {
                 sh 'echo "修改自带的tomcat端口"'
-                sh 'echo  "server.port=12321" >> src/main/resources/application.yml'//部署的vps端口8080被占用 需要修改默认的端口
+                sh 'echo  "server.port=12321" >> src/main/resources/application.properties'//部署的vps端口8080被占用 需要修改默认的端口
                 sh 'echo "开始构建并打包成war包"'
                 sh './gradlew build'
                 archiveArtifacts artifacts: 'build/libs/**/*.war', fingerprint: true//归档成品
