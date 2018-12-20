@@ -4,4 +4,4 @@ echo $pid
 if [ $pid  ];then
     kill -9 $pid
 fi
-rm -rf /www/wwwroot/questionnairetest_jieblog_win/*
+rm -rf ~/questionbackend/*
