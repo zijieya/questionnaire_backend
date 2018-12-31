@@ -12,7 +12,7 @@ public class BaseResponse {
     @ApiModelProperty(value = "响应时间")
     private Date serverDate;
     @ApiModelProperty(value = "业务响应代码",notes = "当不抛出异常时则表明请求正常" )
-    private int code=200200;
+    private int code=200;
 
     public boolean isSuccessful() {
         return isSuccessful;
