@@ -11,6 +11,8 @@ public class BaseResponse {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss" )
     @ApiModelProperty(value = "响应时间")
     private Date serverDate;
+    @ApiModelProperty(value = "业务响应代码",notes = "当不抛出异常时则表明请求正常" )
+    private int code=200200;
 
     public boolean isSuccessful() {
         return isSuccessful;
@@ -22,5 +24,9 @@ public class BaseResponse {
 
     public Date getServerDate() {
         return new Date();
+    }
+
+    public int getCode() {
+        return code;
     }
 }
