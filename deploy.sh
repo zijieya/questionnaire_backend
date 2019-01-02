@@ -13,6 +13,5 @@ scp build/libs/*.war  $testserver:~/questionbackend/
 #运行
 ssh  $testserver  >/dev/null 2>&1 << EOF
 cd ~/questionbackend
-sudo ln -s * /etc/init.d/questionnaire
 sudo service questionnaire start
 EOF

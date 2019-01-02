@@ -4,11 +4,7 @@
 #if [ $pid  ];then
 #    kill -9 $pid
 #fi
-#判断软连接是否存在
-if [ -e "/etc/init.d/questionnaire" ]; then
     #停止服务
     sudo service questionnaire stop
-    #删除文件及软连接
+    #删除文件
     rm -rf ~/questionbackend/*
-    rm -rf /etc/init.d/questionnaire
-fi
