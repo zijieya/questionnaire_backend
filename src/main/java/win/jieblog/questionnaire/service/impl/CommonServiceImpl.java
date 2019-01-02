@@ -2,7 +2,6 @@ package win.jieblog.questionnaire.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.ibatis.javassist.bytecode.stackmap.BasicBlock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +16,8 @@ import win.jieblog.questionnaire.enums.ErrorCode;
 import win.jieblog.questionnaire.exception.DataBaseErrorException;
 import win.jieblog.questionnaire.exception.NotFoundException;
 import win.jieblog.questionnaire.model.contract.common.*;
+import win.jieblog.questionnaire.model.contract.user.GetUserInfoRequest;
+import win.jieblog.questionnaire.model.contract.user.GetUserInfoResponse;
 import win.jieblog.questionnaire.model.entity.User;
 import win.jieblog.questionnaire.service.CommonService;
 import win.jieblog.questionnaire.utils.JwtHelper;
@@ -30,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class CommonServiceImpl implements CommonService {
-    private final static long ttlTime=60*1000*60;//token的有效期为一小时
+    private final static long ttlTime=60*1000*60*24;//token的有效期为一天
     private static ObjectMapper MAPPER = new ObjectMapper();
     Logger logger=LoggerFactory.getLogger(CommonServiceImpl.class);
     @Autowired
@@ -68,9 +69,10 @@ public class CommonServiceImpl implements CommonService {
             String subject=MAPPER.writeValueAsString(map);
             String token=jwtHelper.createToken(user.getUserserialid(),subject,ttlTime);
             resp.setHeader("Authorization","Bearer "+token);
-            //存入 redis
+            //存入 redis user到token
             template.opsForHash().put("token",request.getUsername(),token);
-
+            //存入redis token到user
+            template.opsForHash().put("tokentouser",token,request.getUsername());
             logger.info("存入"+user.getUsername()+"token到redis");
         }
         return response;
@@ -176,6 +178,27 @@ public class CommonServiceImpl implements CommonService {
            throw new DataBaseErrorException("更新异常",ErrorCode.UPDATE_ERROR.getCode());
        }
        response.setSuccessful(true);
+       return response;
+    }
+
+    /**
+     * 通过token拉取用户信息
+     * @param request
+     * @return
+     * @throws NotFoundException
+     */
+    @Override
+    public GetUserInfoResponse getUserInfo(GetUserInfoRequest request) throws NotFoundException {
+        GetUserInfoResponse response=new GetUserInfoResponse();
+       String username= template.opsForHash().get("tokentouser",request.getToken()).toString();
+       if (username==null){
+           throw new NotFoundException("token不存在",ErrorCode.EMPTY_TOKEN.getCode());
+       }
+       User user=userMapper.getUserByEmailOrUsername("",username).get(0);
+       response.setUsername(user.getUsername());
+       response.setAccess(user.getRole());
+       response.setAvatar(user.getAvatar());
+       response.setUserId(user.getUserid());
        return response;
     }
 }
