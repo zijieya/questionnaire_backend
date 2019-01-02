@@ -1,6 +1,7 @@
 package win.jieblog.questionnaire.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,7 @@ public class UserServiceImpl implements UserService {
     public GlobalSearchForUserResponse globalSearchForUser(GlobalSearchForUserRequest request){
         PageHelper.startPage(request.getPageIndex(),request.getPageSize());
         List<Servey> list=serveyMapper.selectByTagOrTitle(request.getKeyword());
+        PageInfo pageInfo=new PageInfo(list);
         GlobalSearchForUserResponse response=new GlobalSearchForUserResponse();
         List<ServeyItem> serveyItemList=new ArrayList<>();
         List<String> listUserSerialsId=new ArrayList<>();//存储所有的userSerialsId
@@ -81,6 +83,7 @@ public class UserServiceImpl implements UserService {
         }
         response.setList(serveyItemList);
         response.setSuccessful(true);
+        response.setTotal(pageInfo.getTotal());
         return response;
     }
 
