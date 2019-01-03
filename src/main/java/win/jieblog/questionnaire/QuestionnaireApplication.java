@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootApplication(scanBasePackages = "win.jieblog.questionnaire")
 @MapperScan(value = "win.jieblog.questionnaire.dao")
-@ServletComponentScan(basePackages = {"win.jieblog.questionnaire.filter"})
+@ServletComponentScan
 @EnableTransactionManagement
 public class QuestionnaireApplication {
 
