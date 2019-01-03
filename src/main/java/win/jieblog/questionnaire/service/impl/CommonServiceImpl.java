@@ -194,6 +194,7 @@ public class CommonServiceImpl implements CommonService {
        if (username==null){
            throw new NotFoundException("token不存在",ErrorCode.EMPTY_TOKEN.getCode());
        }
+
        User user=userMapper.getUserByEmailOrUsername("",username).get(0);
        response.setUsername(user.getUsername());
        response.setAccess(user.getRole());

@@ -36,31 +36,31 @@ public class CommonController {
     @ApiOperation(value = "注册",notes = "注册用户,并进行相关校验")
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.OK)
-    public RegisterResponse regitser(RegisterRequest request) throws NotFoundException {
+    public RegisterResponse regitser(@RequestBody RegisterRequest request) throws NotFoundException {
         return commonService.register(request);
     }
     @ApiOperation(value = "发送验证码",notes = "发送验证码")
     @PostMapping("/sendmail")
     @ResponseStatus(HttpStatus.OK)
-    public SendMailResponse sendMail(SendMailRequest request) throws NotFoundException{
+    public SendMailResponse sendMail(@RequestBody SendMailRequest request) throws NotFoundException{
         return commonService.sendMail(request);
     }
     @ApiOperation(value = "验证码校验",notes = "验证码校验")
     @PostMapping("/activecode")
     @ResponseStatus(HttpStatus.OK)
-    public ActiveCodeResponse activeCode(ActiveCodeRequest request) throws NotFoundException{
+    public ActiveCodeResponse activeCode(@RequestBody ActiveCodeRequest request) throws NotFoundException{
         return commonService.activeCode(request);
     }
     @ApiOperation(value = "重置密码",notes = "重置密码")
     @PutMapping("/password")
     @ResponseStatus(HttpStatus.OK)
-    public ResetPasswordResponse resetPassword(ResetPasswordRequest request) throws DataBaseErrorException {
+    public ResetPasswordResponse resetPassword(@RequestBody ResetPasswordRequest request) throws DataBaseErrorException {
         return commonService.resetPassword(request);
     }
     @ApiOperation(value = "通过token拉取用户信息",notes = "通过token拉取用户信息,有特殊字符只能用post")
     @PostMapping("/userinfo")
     @ResponseStatus(HttpStatus.OK)
-    public GetUserInfoResponse getUserInfo(GetUserInfoRequest request) throws NotFoundException {
+    public GetUserInfoResponse getUserInfo(@RequestBody GetUserInfoRequest request) throws NotFoundException {
         return  commonService.getUserInfo(request);
     }
 }
