@@ -57,12 +57,10 @@ public class CommonController {
     public ResetPasswordResponse resetPassword(ResetPasswordRequest request) throws DataBaseErrorException {
         return commonService.resetPassword(request);
     }
-    @ApiOperation(value = "通过token拉取用户信息",notes = "通过token拉取用户信息")
-    @GetMapping("/userinfo/{token}")
+    @ApiOperation(value = "通过token拉取用户信息",notes = "通过token拉取用户信息,有特殊字符只能用post")
+    @PostMapping("/userinfo")
     @ResponseStatus(HttpStatus.OK)
-    public GetUserInfoResponse getUserInfo(@PathVariable("token") String token) throws NotFoundException {
-        GetUserInfoRequest request=new GetUserInfoRequest();
-        request.setToken(token);
+    public GetUserInfoResponse getUserInfo(GetUserInfoRequest request) throws NotFoundException {
         return  commonService.getUserInfo(request);
     }
 }
