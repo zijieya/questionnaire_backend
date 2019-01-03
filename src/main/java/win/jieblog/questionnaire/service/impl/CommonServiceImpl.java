@@ -190,7 +190,8 @@ public class CommonServiceImpl implements CommonService {
     @Override
     public GetUserInfoResponse getUserInfo(GetUserInfoRequest request) throws NotFoundException {
         GetUserInfoResponse response=new GetUserInfoResponse();
-       String username= template.opsForHash().get("tokentouser",request.getToken()).toString();
+       String username= (String) template.opsForHash().get("tokentouser",request.getToken());
+       logger.info(username);
        if (username==null){
            throw new NotFoundException("token不存在",ErrorCode.EMPTY_TOKEN.getCode());
        }
