@@ -2,6 +2,13 @@ package win.jieblog.questionnaire.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +27,12 @@ import win.jieblog.questionnaire.model.contract.user.GetUserInfoRequest;
 import win.jieblog.questionnaire.model.contract.user.GetUserInfoResponse;
 import win.jieblog.questionnaire.model.entity.User;
 import win.jieblog.questionnaire.service.CommonService;
+import win.jieblog.questionnaire.utils.AvatarHelper;
 import win.jieblog.questionnaire.utils.JwtHelper;
 import win.jieblog.questionnaire.utils.SerialsIdHelper;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +52,8 @@ public class CommonServiceImpl implements CommonService {
     MailSender mailSender;
     @Autowired
     private Environment env;
+    @Autowired
+    private AvatarHelper avatarHelper;
     /**
      *
      * @param resp httpservlet
@@ -90,6 +101,7 @@ public class CommonServiceImpl implements CommonService {
         User user=new User();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
+        user.setAvatar(avatarHelper.getGravatarUrl(request.getEmail()));
         //校验用户名和邮箱是否已经存在
         List<User> list =userMapper.getUserByEmailOrUsername(request.getEmail(),request.getUsername());
         if (list.size()>0){
@@ -202,5 +214,44 @@ public class CommonServiceImpl implements CommonService {
        response.setAvatar(user.getAvatar());
        response.setUserId(user.getUserid());
        return response;
+    }
+
+    /**
+     * 更新头像
+     * @param request
+     * @return
+     * @throws IOException
+     * @throws NotFoundException
+     * @throws DataBaseErrorException
+     */
+    @Override
+    public UploadAvatarResponse uploadAvatar(UploadAvatarRequest request) throws IOException, NotFoundException, DataBaseErrorException {
+        UploadAvatarResponse uploadAvatarResponse=new UploadAvatarResponse();
+        // 用httpget下载文件
+        HttpGet httpGet=new HttpGet(request.getAvatarUrl());
+        HttpResponse response = HttpClients.createDefault().execute(httpGet);
+        if (response==null||response.getStatusLine()==null){
+            throw new NotFoundException("文件下载请求失败",ErrorCode.RESOURCENAME_NOT_FOUND.getCode());
+        }else if (response.getStatusLine().getStatusCode()!= HttpStatus.SC_OK){
+            throw new NotFoundException("文件下载请求失败",ErrorCode.RESOURCENAME_NOT_FOUND.getCode());
+        }
+        else
+        {
+             byte[] byteFile= EntityUtils.toByteArray(response.getEntity());
+             File file=new File(request.getAvatarName());
+             OutputStream output = new FileOutputStream(file);
+             BufferedOutputStream bufferedOutput = new BufferedOutputStream(output);
+             bufferedOutput.write(byteFile);
+             String avatarUrl=avatarHelper.getOssUrl(request.getAvatarName(),file);
+             // 更新数据库url
+            User user=new User();
+            user.setUserserialid(request.getUserserialid());
+            user.setAvatar(avatarUrl);
+            int total=userMapper.updateByPrimaryKeySelective(user);
+            if (total!=1){
+                throw new DataBaseErrorException("更新异常",ErrorCode.UPDATE_ERROR.getCode());
+            }
+            return uploadAvatarResponse;
+        }
     }
 }

@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import win.jieblog.questionnaire.enums.ErrorCode;
 import win.jieblog.questionnaire.exception.AuthorityException;
 import win.jieblog.questionnaire.exception.DataBaseErrorException;
+import win.jieblog.questionnaire.model.contract.common.UploadAvatarRequest;
+import win.jieblog.questionnaire.model.contract.common.UploadAvatarResponse;
 import win.jieblog.questionnaire.model.contract.user.*;
 import win.jieblog.questionnaire.service.UserService;
 

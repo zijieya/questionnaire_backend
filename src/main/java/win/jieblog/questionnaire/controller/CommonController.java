@@ -17,6 +17,7 @@ import win.jieblog.questionnaire.service.CommonService;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * 存放一些公共操作
@@ -62,6 +63,12 @@ public class CommonController {
     @ResponseStatus(HttpStatus.OK)
     public GetUserInfoResponse getUserInfo(@RequestBody GetUserInfoRequest request) throws NotFoundException {
         return  commonService.getUserInfo(request);
+    }
+    @ApiOperation(value = "上传头像",notes = "上传头像")
+    @PostMapping("/uploadavatar")
+    @ResponseStatus(HttpStatus.OK)
+    public UploadAvatarResponse uploadAvatar(UploadAvatarRequest request) throws NotFoundException, DataBaseErrorException, IOException {
+        return commonService.uploadAvatar(request);
     }
 }
 

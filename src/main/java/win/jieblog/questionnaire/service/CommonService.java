@@ -8,6 +8,7 @@ import win.jieblog.questionnaire.model.contract.user.GetUserInfoRequest;
 import win.jieblog.questionnaire.model.contract.user.GetUserInfoResponse;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 public interface CommonService {
     LoginResponse getLogin(HttpServletResponse resp, LoginRequest request) throws NotFoundException, JsonProcessingException;
@@ -16,5 +17,6 @@ public interface CommonService {
     ActiveCodeResponse activeCode(ActiveCodeRequest request) throws NotFoundException;
     ResetPasswordResponse resetPassword(ResetPasswordRequest request) throws DataBaseErrorException;
     GetUserInfoResponse getUserInfo(GetUserInfoRequest request) throws NotFoundException;
+    UploadAvatarResponse uploadAvatar(UploadAvatarRequest request) throws IOException, NotFoundException, DataBaseErrorException;
 
 }

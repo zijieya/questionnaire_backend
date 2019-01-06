@@ -8,8 +8,9 @@ public enum ErrorCode {
     EXPIRE_TOKEN(40303),
     ERROR_TOKEN(40304),
     UPDATE_ERROR(50001),
-    INSERT_ERROR(50002);
-
+    INSERT_ERROR(50002),
+    URL_NOT_FOUND(40403),
+    RESOURCENAME_NOT_FOUND(40404);
     private int code;
 
     public int getCode() {
