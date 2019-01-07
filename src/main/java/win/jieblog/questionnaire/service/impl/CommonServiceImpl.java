@@ -29,6 +29,7 @@ import win.jieblog.questionnaire.model.entity.User;
 import win.jieblog.questionnaire.service.CommonService;
 import win.jieblog.questionnaire.utils.AvatarHelper;
 import win.jieblog.questionnaire.utils.JwtHelper;
+import win.jieblog.questionnaire.utils.LogHelper;
 import win.jieblog.questionnaire.utils.SerialsIdHelper;
 
 import javax.servlet.http.HttpServletResponse;
@@ -68,7 +69,7 @@ public class CommonServiceImpl implements CommonService {
         User user=userMapper.getUserByLogin(request.getUsername(),request.getPassword());
         LoginResponse response=new LoginResponse();
         if (user==null){
-            logger.error("用户名或密码错误");
+            logger.error(LogHelper.LogStatement(request.getUsername(),"登录","失败","用户名或密码错误"));
             throw new NotFoundException("用户名或密码错误", ErrorCode.USER_NOT_FOUND.getCode());
         }
         else
@@ -84,7 +85,8 @@ public class CommonServiceImpl implements CommonService {
             template.opsForHash().put("token",request.getUsername(),token);
             //存入redis token到user
             template.opsForHash().put("tokentouser",token,request.getUsername());
-            logger.info("存入"+user.getUsername()+"token到redis");
+            //logger.info("存入"+user.getUsername()+"token到redis");
+            logger.info(LogHelper.LogStatement(user.getUsername(),"登录","成功"));
         }
         return response;
     }
@@ -105,7 +107,7 @@ public class CommonServiceImpl implements CommonService {
         //校验用户名和邮箱是否已经存在
         List<User> list =userMapper.getUserByEmailOrUsername(request.getEmail(),request.getUsername());
         if (list.size()>0){
-            logger.error("已存在"+request.getEmail()+"或者"+request.getUsername());
+            logger.error(LogHelper.LogStatement(request.getUsername(),"注册","失败","已存在此用户名或邮箱"));
             throw new NotFoundException("已存在此用户名或邮箱",ErrorCode.USER_NOT_FOUND.getCode());
         }
         else
@@ -114,6 +116,7 @@ public class CommonServiceImpl implements CommonService {
             user.setUserserialid(SerialsIdHelper.getSerialsId());
             int count=userMapper.insertSelective(user);//影响的条数
             logger.info("增加用户"+user.getUsername());
+            logger.info(user.getUsername(),"注册","成功");
             response.setSuccessful(true);
         }
         return response;
@@ -129,7 +132,7 @@ public class CommonServiceImpl implements CommonService {
         // 验证邮箱是否存在 重用 getUserByEmailOrUsername
        List<User> list =userMapper.getUserByEmailOrUsername(request.getEmail(),null);
        if (list.size()==0){
-           logger.error("找不到邮箱"+request.getEmail());
+           logger.error(LogHelper.LogStatement("系统","查找邮箱","失败","找不到该邮箱"));
            throw new NotFoundException("找不到该邮箱",ErrorCode.USER_NOT_FOUND.getCode());
 
        }
@@ -141,7 +144,8 @@ public class CommonServiceImpl implements CommonService {
        simpleMailMessage.setFrom(env.getProperty("spring.mail.username"));
        simpleMailMessage.setSubject("验证码");
        mailSender.send(simpleMailMessage);
-       logger.info("成功发送邮件到"+request.getEmail());
+       logger.info(LogHelper.LogStatement("系统","发送邮件验证码","成功"));
+
        //验证码保存5分钟
        template.opsForValue().set(list.get(0).getUserserialid(),code,5, TimeUnit.MINUTES);
        response.setEmail(request.getEmail());
@@ -159,17 +163,19 @@ public class CommonServiceImpl implements CommonService {
    public ActiveCodeResponse activeCode(ActiveCodeRequest request) throws NotFoundException{
         ActiveCodeResponse response=new ActiveCodeResponse();
         Integer code= (Integer) template.opsForValue().get(request.getUserserialid());
-        logger.info("从redis中查找"+request.getUserserialid()+"的验证码");
+        // 仅仅表明进行了redis操作
+        logger.info(LogHelper.LogStatement("系统","从redis中查找用户序列号为"+request.getUserserialid()+"的验证码","成功"));
         if (code==null){
+            logger.error(LogHelper.LogStatement(request.getUserserialid(),"验证码校验","失败","验证码失效"));
             throw new NotFoundException("验证码失效",ErrorCode.ACTIVECODE_NOT_FOUND.getCode());
         }
         if (code!=request.getVerificationCode()){
-            logger.error(request.getUserserialid()+"验证码错误");
+            logger.error(LogHelper.LogStatement(request.getUserserialid(),"验证码校验","失败","验证码错误"));
             throw new NotFoundException("验证码错误",ErrorCode.ACTIVECODE_NOT_FOUND.getCode());
         }
         response.setSuccessful(true);
         response.setUserserialid(request.getUserserialid());
-        logger.info(request.getUserserialid()+"验证码校验成功");
+        logger.info(LogHelper.LogStatement(request.getUserserialid(),"验证码校验","成功"));
         return response;
     }
 
@@ -187,9 +193,11 @@ public class CommonServiceImpl implements CommonService {
        user.setPassword(request.getPassword());
        int count=userMapper.updateByPrimaryKeySelective(user);
        if (count!=1){
+           logger.error(LogHelper.LogStatement(request.getUserserialid(),"重置密码","失败","数据库更新异常"));
            throw new DataBaseErrorException("更新异常",ErrorCode.UPDATE_ERROR.getCode());
        }
-       response.setSuccessful(true);
+        logger.info(LogHelper.LogStatement(request.getUserserialid(),"重置密码","成功"));
+        response.setSuccessful(true);
        return response;
     }
 
@@ -205,6 +213,7 @@ public class CommonServiceImpl implements CommonService {
        String username= (String) template.opsForHash().get("tokentouser",request.getToken());
        logger.info(username);
        if (username==null){
+           logger.error(LogHelper.LogStatement("token为"+request.getToken(),"通过token拉取用户信息","失败","token不存在"));
            throw new NotFoundException("token不存在",ErrorCode.EMPTY_TOKEN.getCode());
        }
 
@@ -214,7 +223,8 @@ public class CommonServiceImpl implements CommonService {
        response.setAvatar(user.getAvatar());
        response.setUserId(user.getUserid());
        response.setSuccessful(true);
-       return response;
+        logger.error(LogHelper.LogStatement("token为"+request.getToken(),"通过token拉取用户信息","成功"));
+        return response;
     }
 
     /**
@@ -232,8 +242,10 @@ public class CommonServiceImpl implements CommonService {
         HttpGet httpGet=new HttpGet(request.getAvatarUrl());
         HttpResponse response = HttpClients.createDefault().execute(httpGet);
         if (response==null||response.getStatusLine()==null){
+            logger.error(LogHelper.LogStatement(request.getUserserialid(),"上传头像","失败","文件下载请求失败"));
             throw new NotFoundException("文件下载请求失败",ErrorCode.RESOURCENAME_NOT_FOUND.getCode());
         }else if (response.getStatusLine().getStatusCode()!= HttpStatus.SC_OK){
+            logger.error(LogHelper.LogStatement(request.getUserserialid(),"上传头像","失败","文件下载请求失败"));
             throw new NotFoundException("文件下载请求失败",ErrorCode.RESOURCENAME_NOT_FOUND.getCode());
         }
         else
@@ -250,9 +262,11 @@ public class CommonServiceImpl implements CommonService {
             user.setAvatar(avatarUrl);
             int total=userMapper.updateByPrimaryKeySelective(user);
             if (total!=1){
+                logger.error(LogHelper.LogStatement(request.getUserserialid(),"上传头像","失败","数据库更新异常"));
                 throw new DataBaseErrorException("更新异常",ErrorCode.UPDATE_ERROR.getCode());
             }
             uploadAvatarResponse.setSuccessful(true);
+            logger.info(LogHelper.LogStatement(request.getUserserialid(),"上传头像","成功"));
             return uploadAvatarResponse;
         }
     }

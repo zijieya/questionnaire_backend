@@ -20,6 +20,7 @@ import win.jieblog.questionnaire.model.entity.Question;
 import win.jieblog.questionnaire.model.entity.Servey;
 import win.jieblog.questionnaire.model.entity.ServeyResult;
 import win.jieblog.questionnaire.service.UserService;
+import win.jieblog.questionnaire.utils.LogHelper;
 import win.jieblog.questionnaire.utils.SerialsIdHelper;
 
 import java.util.ArrayList;
@@ -81,6 +82,8 @@ public class UserServiceImpl implements UserService {
                 }
             }
         }
+        logger.info(LogHelper.LogStatement("系统","搜索问卷","成功"));
+
         response.setList(serveyItemList);
         response.setSuccessful(true);
         response.setTotal(pageInfo.getTotal());
@@ -128,7 +131,8 @@ public class UserServiceImpl implements UserService {
                 questionItemList.add(questionItem);
             }
         }
-     response.setList(questionItemList);
+        logger.info(LogHelper.LogStatement("系统","问卷详情","成功"));
+        response.setList(questionItemList);
         return response;
     }
 
@@ -168,13 +172,20 @@ public class UserServiceImpl implements UserService {
         }
         int total2=questionMapper.batchInsert(questionList);
         if (total!=1){
-            logger.error("增加问卷异常");
+            logger.error(LogHelper.LogStatement("系统","增加问卷","失败","数据库插入异常"));
             throw new DataBaseErrorException("插入异常",ErrorCode.INSERT_ERROR.getCode());
         }
+        logger.info(LogHelper.LogStatement("系统","增加问卷","成功"));
         response.setSuccessful(true);
         logger.info("成功添加问卷");
         return response;
     }
+
+    /**
+     * 提交问卷
+     * @param request
+     * @return
+     */
     @Transactional
     @Override
     public SubmitServeyResponse submitServey(SubmitServeyRequest request) {
@@ -231,6 +242,7 @@ public class UserServiceImpl implements UserService {
             serveyResult.setAnswererserialid(request.getAnswererserialId());
             int serveyResultCount=serveyResultMapper.insertSelective(serveyResult);
         }
+        logger.info(LogHelper.LogStatement(request.getAnswererserialId(),"提交问卷答案","成功"));
         SubmitServeyResponse response=new SubmitServeyResponse();
         response.setSuccessful(true);
         return response;

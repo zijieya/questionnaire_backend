@@ -2,14 +2,18 @@ package win.jieblog.questionnaire.model.contract.user;
 
 import com.google.common.base.Strings;
 import io.swagger.annotations.ApiModelProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import win.jieblog.questionnaire.enums.ErrorCode;
 import win.jieblog.questionnaire.exception.NotFoundException;
 import win.jieblog.questionnaire.model.contract.BaseRequest;
+import win.jieblog.questionnaire.utils.LogHelper;
 
 import java.util.List;
 import java.util.Map;
 
 public class SubmitServeyRequest extends BaseRequest {
+    private Logger logger= LoggerFactory.getLogger(SubmitServeyRequest.class);
     @ApiModelProperty(value = "问卷序列号")
     private String surveyserialid;
     @ApiModelProperty(value = "回答者序列号")
@@ -72,12 +76,18 @@ public class SubmitServeyRequest extends BaseRequest {
     }
     @Override
     public void validate() throws NotFoundException {
-        if (Strings.isNullOrEmpty(surveyserialid))
+        if (Strings.isNullOrEmpty(surveyserialid)){
+            logger.error(LogHelper.LogStatement("系统","提交问卷","失败","用户序列号为空"));
             throw new NotFoundException("用户序列号为空", ErrorCode.RESOURCENAME_NOT_FOUND.getCode());
-        if (Strings.isNullOrEmpty(answererserialId))
+        }
+        if (Strings.isNullOrEmpty(answererserialId)){
+            logger.error(LogHelper.LogStatement("系统","提交问卷","失败","回答者序列号为空"));
             throw new NotFoundException("回答者序列号为空",ErrorCode.RESOURCENAME_NOT_FOUND.getCode());
-        if (Strings.isNullOrEmpty(answer.toString()))
+        }
+        if (Strings.isNullOrEmpty(answer.toString())){
+            logger.error(LogHelper.LogStatement("系统","提交问卷","失败","答案为空"));
             throw new NotFoundException("答案为空",ErrorCode.RESOURCENAME_NOT_FOUND.getCode());
+        }
     }
 }
 
