@@ -25,7 +25,7 @@ public class UserController {
     @Autowired
     HttpServletRequest request;
     @ApiOperation(value = "问卷列表",notes = "问卷列表")
-    @GetMapping(value = "/servey/{keyword}/{pageIndex}/{pageSize}")
+    @GetMapping(value = "/v1/servey/{keyword}/{pageIndex}/{pageSize}")
     @ResponseStatus(HttpStatus.OK)
     public GlobalSearchForUserResponse globalSearchForUser(@PathVariable("keyword") String keyword, @PathVariable("pageIndex") int pageIndex, @PathVariable("pageSize") int pageSize) throws AuthorityException {
         GlobalSearchForUserRequest globalSearchForUserRequest=new GlobalSearchForUserRequest();
@@ -35,7 +35,7 @@ public class UserController {
         return userService.globalSearchForUser(globalSearchForUserRequest);
     }
     @ApiOperation(value = "问卷详情",notes = "问卷详情")
-    @GetMapping(value = "/serveydetail/{surveyserialid}")
+    @GetMapping(value = "/v1/servey/{surveyserialid}")
     @ResponseStatus(HttpStatus.OK)
     public ServeyDetailResponse serveyDetail(@PathVariable("surveyserialid") String surveyserialid){
         ServeyDetailRequest request=new ServeyDetailRequest();
@@ -43,14 +43,14 @@ public class UserController {
         return userService.serveyDetail(request);
     }
     @ApiModelProperty(value = "生成问卷")
-    @PostMapping(value = "/generateServey")
-    @ResponseStatus(HttpStatus.OK)
+    @PostMapping(value = "/v1/servey")
+    @ResponseStatus(HttpStatus.CREATED)
     public GenerateServeyResponse generateServey(@RequestBody GenerateServeyRequest request) throws DataBaseErrorException {
         return userService.generateServey(request);
     }
     @ApiModelProperty(value = "提交问卷")
-    @PostMapping(value = "/submitServey")
-    @ResponseStatus(HttpStatus.OK)
+    @PostMapping(value = "/v1/servey/result")
+    @ResponseStatus(HttpStatus.CREATED)
     public SubmitServeyResponse submitServey(SubmitServeyRequest request){
         return userService.submitServey(request);
     }
