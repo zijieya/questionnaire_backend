@@ -213,6 +213,7 @@ public class CommonServiceImpl implements CommonService {
        response.setAccess(user.getRole());
        response.setAvatar(user.getAvatar());
        response.setUserId(user.getUserid());
+       response.setSuccessful(true);
        return response;
     }
 
@@ -251,6 +252,7 @@ public class CommonServiceImpl implements CommonService {
             if (total!=1){
                 throw new DataBaseErrorException("更新异常",ErrorCode.UPDATE_ERROR.getCode());
             }
+            uploadAvatarResponse.setSuccessful(true);
             return uploadAvatarResponse;
         }
     }

@@ -1,8 +1,12 @@
 package win.jieblog.questionnaire.model.contract.common;
 
+import com.google.common.base.Strings;
 import io.swagger.annotations.ApiModelProperty;
+import win.jieblog.questionnaire.enums.ErrorCode;
+import win.jieblog.questionnaire.exception.NotFoundException;
+import win.jieblog.questionnaire.model.contract.BaseRequest;
 
-public class RegisterRequest {
+public class RegisterRequest extends BaseRequest {
     @ApiModelProperty(value = "邮箱")
     private String email;
     @ApiModelProperty(value = "用户名")
@@ -32,5 +36,14 @@ public class RegisterRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+    @Override
+    public void validate() throws NotFoundException {
+        if (Strings.isNullOrEmpty(email))
+            throw new NotFoundException("邮箱为空", ErrorCode.RESOURCENAME_NOT_FOUND.getCode());
+        if (Strings.isNullOrEmpty(username))
+            throw new NotFoundException("用户名为空", ErrorCode.RESOURCENAME_NOT_FOUND.getCode());
+        if (Strings.isNullOrEmpty(password))
+            throw new NotFoundException("密码为空",ErrorCode.RESOURCENAME_NOT_FOUND.getCode());
     }
 }

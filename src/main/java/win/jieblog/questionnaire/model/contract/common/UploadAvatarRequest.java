@@ -1,8 +1,12 @@
 package win.jieblog.questionnaire.model.contract.common;
 
+import com.google.common.base.Strings;
 import io.swagger.annotations.ApiModelProperty;
+import win.jieblog.questionnaire.enums.ErrorCode;
+import win.jieblog.questionnaire.exception.NotFoundException;
+import win.jieblog.questionnaire.model.contract.BaseRequest;
 
-public class UploadAvatarRequest {
+public class UploadAvatarRequest extends BaseRequest {
     @ApiModelProperty(value = "用户序列号")
     private String userserialid;
     @ApiModelProperty(value = "头像url")
@@ -32,5 +36,14 @@ public class UploadAvatarRequest {
 
     public void setAvatarName(String avatarName) {
         this.avatarName = avatarName;
+    }
+    @Override
+    public void validate() throws NotFoundException {
+        if (Strings.isNullOrEmpty(userserialid))
+            throw new NotFoundException("用户序列号为空", ErrorCode.RESOURCENAME_NOT_FOUND.getCode());
+        if (Strings.isNullOrEmpty(avatarUrl))
+            throw new NotFoundException("头像url为空",ErrorCode.RESOURCENAME_NOT_FOUND.getCode());
+        if (Strings.isNullOrEmpty(avatarName))
+            throw new NotFoundException("头像名称为空",ErrorCode.RESOURCENAME_NOT_FOUND.getCode());
     }
 }

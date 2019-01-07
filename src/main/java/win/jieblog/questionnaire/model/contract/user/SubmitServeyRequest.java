@@ -1,11 +1,15 @@
 package win.jieblog.questionnaire.model.contract.user;
 
+import com.google.common.base.Strings;
 import io.swagger.annotations.ApiModelProperty;
+import win.jieblog.questionnaire.enums.ErrorCode;
+import win.jieblog.questionnaire.exception.NotFoundException;
+import win.jieblog.questionnaire.model.contract.BaseRequest;
 
 import java.util.List;
 import java.util.Map;
 
-public class SubmitServeyRequest {
+public class SubmitServeyRequest extends BaseRequest {
     @ApiModelProperty(value = "问卷序列号")
     private String surveyserialid;
     @ApiModelProperty(value = "回答者序列号")
@@ -66,4 +70,14 @@ public class SubmitServeyRequest {
     public void setList(List<AnswerInSubmitServey> list) {
         this.list = list;
     }
+    @Override
+    public void validate() throws NotFoundException {
+        if (Strings.isNullOrEmpty(surveyserialid))
+            throw new NotFoundException("用户序列号为空", ErrorCode.RESOURCENAME_NOT_FOUND.getCode());
+        if (Strings.isNullOrEmpty(answererserialId))
+            throw new NotFoundException("回答者序列号为空",ErrorCode.RESOURCENAME_NOT_FOUND.getCode());
+        if (Strings.isNullOrEmpty(answer.toString()))
+            throw new NotFoundException("答案为空",ErrorCode.RESOURCENAME_NOT_FOUND.getCode());
+    }
 }
+
