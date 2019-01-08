@@ -13,6 +13,8 @@ public class GetUserInfoResponse extends BaseResponse {
     private String avatar;
     @ApiModelProperty(value = "用户权限",notes = "前端模板为此字段")
     private String access;
+    @ApiModelProperty(value = "用户序列号")
+    private String userSerialId;
 
     public int getUserId() {
         return userId;
@@ -44,5 +46,13 @@ public class GetUserInfoResponse extends BaseResponse {
 
     public void setAccess(String access) {
         this.access = access;
+    }
+
+    public String getUserSerialId() {
+        return userSerialId;
+    }
+
+    public void setUserSerialId(String userSerialId) {
+        this.userSerialId = userSerialId;
     }
 }
