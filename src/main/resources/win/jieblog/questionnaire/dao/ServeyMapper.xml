@@ -182,8 +182,16 @@
   <select id="selectByTagOrTitle" resultMap="BaseResultMap">
       select
       <include refid="Base_Column_List" />
-      from servey
-      where title like CONCAT(#{keyword},'%') or tag like CONCAT(#{keyword},'%')
+      from servey where
+    <choose>
+      <when test="keyword=='all'">
+        1=1
+      </when>
+      <otherwise>
+       title like CONCAT(#{keyword},'%') or tag like CONCAT(#{keyword},'%')
+      </otherwise>
+    </choose>
+
   </select>
   <select id="selectBySerialid" resultMap="BaseResultMap">
     select

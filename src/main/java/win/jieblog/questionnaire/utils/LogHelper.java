@@ -12,7 +12,7 @@ public class LogHelper {
      * @return
      */
     public static String LogStatement(String username,String operation,String result){
-        return "用户:"+username+" "+"操作"+operation+" "+"结果"+result;
+        return "用户:"+username+" "+"操作:"+operation+" "+"结果:"+result;
     }
 
     /**
