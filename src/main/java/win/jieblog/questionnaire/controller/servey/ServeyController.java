@@ -15,10 +15,12 @@ public class ServeyController {
     @Autowired
     private ServeyService serveyService;
     @ApiOperation(value = "问卷列表",notes = "问卷列表")
-    @GetMapping(value = "/v1/servey/{keyword}/{pageIndex}/{pageSize}")
+    @GetMapping(value = "/v1/servey/{userserialid}/{searchtype}/{keyword}/{pageIndex}/{pageSize}")
     @ResponseStatus(HttpStatus.OK)
-    public GlobalSearchForUserResponse globalSearchForUser(@PathVariable("keyword") String keyword, @PathVariable("pageIndex") int pageIndex, @PathVariable("pageSize") int pageSize) throws AuthorityException {
+    public GlobalSearchForUserResponse globalSearchForUser(@PathVariable("userserialid") String userserialid,@PathVariable("searchtype") int searchType, @PathVariable("keyword") String keyword, @PathVariable("pageIndex") int pageIndex, @PathVariable("pageSize") int pageSize) throws AuthorityException {
         GlobalSearchForUserRequest globalSearchForUserRequest=new GlobalSearchForUserRequest();
+        globalSearchForUserRequest.setUserserialid(userserialid);
+        globalSearchForUserRequest.setSearchType(searchType);
         globalSearchForUserRequest.setKeyword(keyword);
         globalSearchForUserRequest.setPageIndex(pageIndex);
         globalSearchForUserRequest.setPageSize(pageSize);

@@ -179,4 +179,9 @@
       updatedatetime = #{updatedatetime,jdbcType=TIMESTAMP}
     where serveyresultid = #{serveyresultid,jdbcType=INTEGER}
   </update>
+  <select id="selectByAnswererserialId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from serveyResult where answererserialId = #{answererserialId}
+  </select>
 </mapper>

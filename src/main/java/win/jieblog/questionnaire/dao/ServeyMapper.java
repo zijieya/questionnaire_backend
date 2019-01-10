@@ -56,11 +56,13 @@ public interface ServeyMapper {
     int updateByPrimaryKey(Servey record);
 
     /**
-     * 根据标题或标签模糊搜索
+     * 根据标题或标签模糊搜索 去除过期的问卷
      * @param keyword 关键字
      * @return
      */
-    List<Servey> selectByTagOrTitle(@Param("keyword") String keyword);
+    List<Servey> selectAllServeyByTagOrTitle(@Param("keyword") String keyword);
     Servey selectBySerialid(@Param("surveyserialid") String surveyserialid);
     int updateBySerialId(Servey  servey);
+    List<Servey> selectMyServeyByTagOrTitle(@Param("userserialid") String userserialid,@Param("keyword") String keyword);
+    List<Servey> selectMyAnswerServeyByTagOrTitle(@Param("list") List<String> list,@Param("keyword") String keyword);
 }

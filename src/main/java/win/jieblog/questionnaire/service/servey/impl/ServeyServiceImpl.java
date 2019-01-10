@@ -9,14 +9,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import win.jieblog.questionnaire.dao.QuestionMapper;
 import win.jieblog.questionnaire.dao.ServeyMapper;
+import win.jieblog.questionnaire.dao.ServeyResultMapper;
 import win.jieblog.questionnaire.dao.UserMapper;
 import win.jieblog.questionnaire.enums.ErrorCode;
 import win.jieblog.questionnaire.exception.AuthorityException;
 import win.jieblog.questionnaire.exception.DataBaseErrorException;
+import win.jieblog.questionnaire.exception.NotFoundException;
 import win.jieblog.questionnaire.model.contract.servey.*;
 import win.jieblog.questionnaire.model.dto.GetUsernameByUserserialId;
 import win.jieblog.questionnaire.model.entity.Question;
 import win.jieblog.questionnaire.model.entity.Servey;
+import win.jieblog.questionnaire.model.entity.ServeyResult;
 import win.jieblog.questionnaire.service.servey.ServeyService;
 import win.jieblog.questionnaire.utils.LogHelper;
 import win.jieblog.questionnaire.utils.SerialsIdHelper;
@@ -32,6 +35,8 @@ public class ServeyServiceImpl implements ServeyService {
     private UserMapper userMapper;
     @Autowired
     private QuestionMapper questionMapper;
+    @Autowired
+    private ServeyResultMapper serveyResultMapper;
     /**
      * 问卷列表
      * @param request
@@ -40,8 +45,29 @@ public class ServeyServiceImpl implements ServeyService {
      */
     @Override
     public GlobalSearchForUserResponse globalSearchForUser(GlobalSearchForUserRequest request) {
-        PageHelper.startPage(request.getPageIndex(),request.getPageSize());
-        List<Servey> list=serveyMapper.selectByTagOrTitle(request.getKeyword());
+//        PageHelper.startPage(request.getPageIndex(),request.getPageSize());
+//        List<Servey> list=serveyMapper.selectByTagOrTitle(request.getKeyword());
+//        PageInfo pageInfo=new PageInfo(list);
+        List<Servey> list=new ArrayList<>();
+        if (request.getSearchType()==1){
+            PageHelper.startPage(request.getPageIndex(),request.getPageSize());
+            list=serveyMapper.selectAllServeyByTagOrTitle(request.getKeyword());
+        }
+        if (request.getSearchType()==2){
+            PageHelper.startPage(request.getPageIndex(),request.getPageSize());
+            list=serveyMapper.selectMyServeyByTagOrTitle(request.getUserserialid(),request.getKeyword());
+        }
+        if (request.getSearchType()==3){
+            List<ServeyResult> serveyResultList=serveyResultMapper.selectByAnswererserialId(request.getUserserialid());
+            if (serveyResultList.size()>0){
+                List<String> serveySerialIdList=new ArrayList<>();
+                for(ServeyResult serveyResult:serveyResultList){
+                    serveySerialIdList.add(serveyResult.getSurveyserialid());
+                }
+                PageHelper.startPage(request.getPageIndex(),request.getPageSize());
+                list=serveyMapper.selectMyAnswerServeyByTagOrTitle(serveySerialIdList,request.getKeyword());
+            }
+        }
         PageInfo pageInfo=new PageInfo(list);
         GlobalSearchForUserResponse response=new GlobalSearchForUserResponse();
         List<ServeyItem> serveyItemList=new ArrayList<>();

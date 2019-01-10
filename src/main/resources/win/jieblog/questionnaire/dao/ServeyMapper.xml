@@ -179,7 +179,7 @@
       updatedatetime = #{updatedatetime,jdbcType=TIMESTAMP}
     where serveyid = #{serveyid,jdbcType=INTEGER}
   </update>
-  <select id="selectByTagOrTitle" resultMap="BaseResultMap">
+  <select id="selectAllServeyByTagOrTitle" resultMap="BaseResultMap">
       select
       <include refid="Base_Column_List" />
       from servey where
@@ -210,4 +210,42 @@
         updatedatetime = #{updatedatetime,jdbcType=TIMESTAMP}
     where surveyserialid = #{surveyserialid,jdbcType=INTEGER}
   </update>
+  <select id="selectMyServeyByTagOrTitle" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from servey where creatorserialId = #{userserialid} and
+    <choose>
+      <when test="keyword=='all'">
+        1=1
+      </when>
+      <otherwise>
+        title like CONCAT(#{keyword},'%') or tag like CONCAT(#{keyword},'%')
+      </otherwise>
+    </choose>
+
+  </select>
+  <select id="selectMyAnswerServeyByTagOrTitle" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from servey where
+    where surveyserialid in
+    <if test="list.size>0">
+      <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    <if test="list.size==0">
+      (-1)
+    </if>
+    and
+    <choose>
+      <when test="keyword=='all'">
+        1=1
+      </when>
+      <otherwise>
+        title like CONCAT(#{keyword},'%') or tag like CONCAT(#{keyword},'%')
+      </otherwise>
+    </choose>
+
+  </select>
 </mapper>

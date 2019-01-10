@@ -1,7 +1,11 @@
 package win.jieblog.questionnaire.dao;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import win.jieblog.questionnaire.model.entity.ServeyResult;
+
+import java.util.List;
+
 @Mapper
 public interface ServeyResultMapper {
     /**
@@ -51,4 +55,5 @@ public interface ServeyResultMapper {
      * @mbg.generated Thu Nov 15 15:45:15 CST 2018
      */
     int updateByPrimaryKey(ServeyResult record);
+    List<ServeyResult> selectByAnswererserialId(@Param("answererserialId") String answererserialId);
 }
