@@ -75,6 +75,7 @@ public class SessionServiceImpl implements SessionService {
         response.setAccess(user.getRole());
         response.setAvatar(user.getAvatar());
         response.setUserId(user.getUserid());
+        response.setUserSerialId(user.getUserserialid());
         response.setSuccessful(true);
         logger.info(LogHelper.LogStatement("token为"+request.getToken(),"通过token拉取用户信息","成功"));
         return response;
