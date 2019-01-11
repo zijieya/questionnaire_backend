@@ -214,21 +214,15 @@
     select
     <include refid="Base_Column_List" />
     from servey where creatorserialId = #{userserialid} and
-    <choose>
-      <when test="keyword=='all'">
-        1=1
-      </when>
-      <otherwise>
+      <if test="keyword！='all'">
         title like CONCAT(#{keyword},'%') or tag like CONCAT(#{keyword},'%')
-      </otherwise>
-    </choose>
+      </if>
 
   </select>
   <select id="selectMyAnswerServeyByTagOrTitle" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
-    from servey where
-    where surveyserialid in
+    from servey where surveyserialid in
     <if test="list.size>0">
       <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
         #{item}
@@ -238,14 +232,8 @@
       (-1)
     </if>
     and
-    <choose>
-      <when test="keyword=='all'">
-        1=1
-      </when>
-      <otherwise>
+      <if test="keyword!='all'">
         title like CONCAT(#{keyword},'%') or tag like CONCAT(#{keyword},'%')
-      </otherwise>
-    </choose>
-
+      </if>
   </select>
 </mapper>
