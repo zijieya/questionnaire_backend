@@ -49,6 +49,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public RegisterResponse register(RegisterRequest request) throws NotFoundException {
+        request.validate();
         RegisterResponse response=new RegisterResponse();
         // contract转entity
         User user=new User();
@@ -80,7 +81,8 @@ public class UserServiceImpl implements UserService {
      * @throws DataBaseErrorException
      */
     @Override
-    public ResetPasswordResponse resetPassword(ResetPasswordRequest request) throws DataBaseErrorException {
+    public ResetPasswordResponse resetPassword(ResetPasswordRequest request) throws DataBaseErrorException, NotFoundException {
+        request.validate();
         ResetPasswordResponse response=new ResetPasswordResponse();
         User user=new User();
         user.setUserserialid(request.getUserserialid());
@@ -105,6 +107,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UploadAvatarResponse uploadAvatar(UploadAvatarRequest request) throws IOException, NotFoundException, DataBaseErrorException {
+        request.validate();
         UploadAvatarResponse uploadAvatarResponse=new UploadAvatarResponse();
         // 用httpget下载文件
         HttpGet httpGet=new HttpGet(request.getAvatarUrl());

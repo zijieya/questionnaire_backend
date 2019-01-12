@@ -44,10 +44,11 @@ public class ServeyServiceImpl implements ServeyService {
      * @throws AuthorityException
      */
     @Override
-    public GlobalSearchForUserResponse globalSearchForUser(GlobalSearchForUserRequest request) {
+    public GlobalSearchForUserResponse globalSearchForUser(GlobalSearchForUserRequest request) throws NotFoundException {
 //        PageHelper.startPage(request.getPageIndex(),request.getPageSize());
 //        List<Servey> list=serveyMapper.selectByTagOrTitle(request.getKeyword());
 //        PageInfo pageInfo=new PageInfo(list);
+        request.validate();
         List<Servey> list=new ArrayList<>();
         if (request.getSearchType()==1){
             PageHelper.startPage(request.getPageIndex(),request.getPageSize());
@@ -107,7 +108,8 @@ public class ServeyServiceImpl implements ServeyService {
      * @return
      */
     @Override
-    public ServeyDetailResponse serveyDetail(ServeyDetailRequest request) {
+    public ServeyDetailResponse serveyDetail(ServeyDetailRequest request) throws NotFoundException {
+        request.validate();
         ServeyDetailResponse response=new ServeyDetailResponse();
         Servey servey=serveyMapper.selectBySerialid(request.getSurveyserialid());
         List<QuestionItem> questionItemList=new ArrayList<>();
@@ -153,7 +155,8 @@ public class ServeyServiceImpl implements ServeyService {
      */
     @Transactional
     @Override
-    public GenerateServeyResponse generateServey(GenerateServeyRequest request) throws DataBaseErrorException {
+    public GenerateServeyResponse generateServey(GenerateServeyRequest request) throws DataBaseErrorException, NotFoundException {
+        request.validate();
         String serveySerialId= SerialsIdHelper.getSerialsId();
         GenerateServeyResponse response=new GenerateServeyResponse();
         // 插入servey表

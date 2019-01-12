@@ -43,6 +43,7 @@ public class MailServeyImpl implements MailService {
      */
     @Override
     public SendMailResponse sendMail(SendMailRequest request) throws NotFoundException {
+        request.validate();
         // 验证邮箱是否存在 重用 getUserByEmailOrUsername
         List<User> list =userMapper.getUserByEmailOrUsername(request.getEmail(),null);
         if (list.size()==0){
@@ -76,6 +77,7 @@ public class MailServeyImpl implements MailService {
      */
     @Override
     public ActiveCodeResponse activeCode(ActiveCodeRequest request) throws NotFoundException {
+        request.validate();
         ActiveCodeResponse response=new ActiveCodeResponse();
         Integer code= (Integer) template.opsForValue().get(request.getUserserialid());
         // 仅仅表明进行了redis操作

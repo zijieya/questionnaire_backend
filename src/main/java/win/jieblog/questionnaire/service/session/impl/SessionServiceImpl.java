@@ -35,6 +35,7 @@ public class SessionServiceImpl implements SessionService {
     private UserMapper userMapper;
     @Override
     public LoginResponse getLogin(HttpServletResponse resp, LoginRequest request) throws NotFoundException, JsonProcessingException {
+        request.validate();
         JwtHelper jwtHelper=new JwtHelper();
         User user=userMapper.getUserByLogin(request.getUsername(),request.getPassword());
         LoginResponse response=new LoginResponse();

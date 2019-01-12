@@ -29,7 +29,7 @@ public class UserController {
     @ApiOperation(value = "重置密码",notes = "重置密码")
     @PutMapping("/v1/user/password")
     @ResponseStatus(HttpStatus.OK)
-    public ResetPasswordResponse resetPassword(@RequestBody ResetPasswordRequest request) throws DataBaseErrorException {
+    public ResetPasswordResponse resetPassword(@RequestBody ResetPasswordRequest request) throws DataBaseErrorException, NotFoundException {
         return userService.resetPassword(request);
     }
     @ApiOperation(value = "上传头像",notes = "上传头像")

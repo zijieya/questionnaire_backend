@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import win.jieblog.questionnaire.exception.AuthorityException;
 import win.jieblog.questionnaire.exception.DataBaseErrorException;
+import win.jieblog.questionnaire.exception.NotFoundException;
 import win.jieblog.questionnaire.model.contract.servey.*;
 import win.jieblog.questionnaire.service.servey.ServeyService;
 
@@ -17,7 +18,7 @@ public class ServeyController {
     @ApiOperation(value = "问卷列表",notes = "问卷列表")
     @GetMapping(value = "/v1/servey/{userserialid}/{searchtype}/{keyword}/{pageIndex}/{pageSize}")
     @ResponseStatus(HttpStatus.OK)
-    public GlobalSearchForUserResponse globalSearchForUser(@PathVariable("userserialid") String userserialid,@PathVariable("searchtype") int searchType, @PathVariable("keyword") String keyword, @PathVariable("pageIndex") int pageIndex, @PathVariable("pageSize") int pageSize) throws AuthorityException {
+    public GlobalSearchForUserResponse globalSearchForUser(@PathVariable("userserialid") String userserialid,@PathVariable("searchtype") int searchType, @PathVariable("keyword") String keyword, @PathVariable("pageIndex") int pageIndex, @PathVariable("pageSize") int pageSize) throws AuthorityException, NotFoundException {
         GlobalSearchForUserRequest globalSearchForUserRequest=new GlobalSearchForUserRequest();
         globalSearchForUserRequest.setUserserialid(userserialid);
         globalSearchForUserRequest.setSearchType(searchType);
@@ -29,7 +30,7 @@ public class ServeyController {
     @ApiOperation(value = "问卷详情",notes = "问卷详情")
     @GetMapping(value = "/v1/servey/{surveyserialid}")
     @ResponseStatus(HttpStatus.OK)
-    public ServeyDetailResponse serveyDetail(@PathVariable("surveyserialid") String surveyserialid){
+    public ServeyDetailResponse serveyDetail(@PathVariable("surveyserialid") String surveyserialid) throws NotFoundException {
         ServeyDetailRequest request=new ServeyDetailRequest();
         request.setSurveyserialid(surveyserialid);
         return serveyService.serveyDetail(request);
@@ -37,7 +38,7 @@ public class ServeyController {
     @ApiModelProperty(value = "生成问卷")
     @PostMapping(value = "/v1/servey")
     @ResponseStatus(HttpStatus.CREATED)
-    public GenerateServeyResponse generateServey(@RequestBody GenerateServeyRequest request) throws DataBaseErrorException {
+    public GenerateServeyResponse generateServey(@RequestBody GenerateServeyRequest request) throws DataBaseErrorException, NotFoundException {
         return serveyService.generateServey(request);
     }
 }

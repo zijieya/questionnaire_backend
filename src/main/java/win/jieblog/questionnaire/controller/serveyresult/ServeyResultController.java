@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import win.jieblog.questionnaire.exception.NotFoundException;
 import win.jieblog.questionnaire.model.contract.serveyresult.SubmitServeyRequest;
 import win.jieblog.questionnaire.model.contract.serveyresult.SubmitServeyResponse;
 import win.jieblog.questionnaire.service.serveyresult.ServeyResultService;
@@ -17,7 +18,7 @@ public class ServeyResultController {
     @ApiModelProperty(value = "提交问卷")
     @PostMapping(value = "/v1/servey/result")
     @ResponseStatus(HttpStatus.CREATED)
-    public SubmitServeyResponse submitServey(SubmitServeyRequest request){
+    public SubmitServeyResponse submitServey(SubmitServeyRequest request) throws NotFoundException {
         return serveyResultService.submitServey(request);
     }
 }

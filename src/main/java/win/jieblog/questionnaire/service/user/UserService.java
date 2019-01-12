@@ -13,6 +13,6 @@ import java.io.IOException;
 
 public interface UserService {
     RegisterResponse register(RegisterRequest request) throws NotFoundException;
-    ResetPasswordResponse resetPassword(ResetPasswordRequest request) throws DataBaseErrorException;
+    ResetPasswordResponse resetPassword(ResetPasswordRequest request) throws DataBaseErrorException, NotFoundException;
     UploadAvatarResponse uploadAvatar(UploadAvatarRequest request) throws IOException, NotFoundException, DataBaseErrorException;
 }

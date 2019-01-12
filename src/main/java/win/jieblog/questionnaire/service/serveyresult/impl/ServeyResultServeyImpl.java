@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import win.jieblog.questionnaire.dao.QuestionMapper;
 import win.jieblog.questionnaire.dao.ServeyMapper;
 import win.jieblog.questionnaire.dao.ServeyResultMapper;
+import win.jieblog.questionnaire.exception.NotFoundException;
 import win.jieblog.questionnaire.model.contract.serveyresult.AnswerInSubmitServey;
 import win.jieblog.questionnaire.model.contract.serveyresult.SubmitServeyRequest;
 import win.jieblog.questionnaire.model.contract.serveyresult.SubmitServeyResponse;
@@ -42,7 +43,8 @@ public class ServeyResultServeyImpl implements ServeyResultService {
      */
     @Transactional
     @Override
-    public SubmitServeyResponse submitServey(SubmitServeyRequest request) {
+    public SubmitServeyResponse submitServey(SubmitServeyRequest request) throws NotFoundException {
+        request.validate();
         Servey servey=new Servey();
         servey.setSurveyserialid(request.getSurveyserialid());
         List<AnswerInSubmitServey> answerInSubmitServeyList= request.getList();
