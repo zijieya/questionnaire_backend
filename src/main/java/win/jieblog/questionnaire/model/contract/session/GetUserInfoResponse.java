@@ -1,10 +1,11 @@
 package win.jieblog.questionnaire.model.contract.session;
 
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiOperation;
 import win.jieblog.questionnaire.model.contract.BaseResponse;
 
-public class GetUserInfoResponse extends BaseResponse {
+import java.io.Serializable;
+
+public class GetUserInfoResponse extends BaseResponse implements Serializable {
     @ApiModelProperty(value = "用户编号")
     private int userId;
     @ApiModelProperty(value = "用户名")
@@ -55,4 +56,5 @@ public class GetUserInfoResponse extends BaseResponse {
     public void setUserSerialId(String userSerialId) {
         this.userSerialId = userSerialId;
     }
+
 }

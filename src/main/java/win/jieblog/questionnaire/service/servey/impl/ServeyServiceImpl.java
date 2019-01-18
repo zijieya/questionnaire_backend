@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import win.jieblog.questionnaire.dao.QuestionMapper;
@@ -37,6 +38,8 @@ public class ServeyServiceImpl implements ServeyService {
     private QuestionMapper questionMapper;
     @Autowired
     private ServeyResultMapper serveyResultMapper;
+    @Autowired
+    private Environment env;
     /**
      * 问卷列表
      * @param request
@@ -45,6 +48,7 @@ public class ServeyServiceImpl implements ServeyService {
      */
     @Override
     public GlobalSearchForUserResponse globalSearchForUser(GlobalSearchForUserRequest request) throws NotFoundException {
+        logger.info(env.getProperty("spring.datasource.druid.url"));
 //        PageHelper.startPage(request.getPageIndex(),request.getPageSize());
 //        List<Servey> list=serveyMapper.selectByTagOrTitle(request.getKeyword());
 //        PageInfo pageInfo=new PageInfo(list);

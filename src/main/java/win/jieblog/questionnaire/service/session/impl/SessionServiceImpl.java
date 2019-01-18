@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import win.jieblog.questionnaire.dao.UserMapper;
@@ -29,7 +30,7 @@ public class SessionServiceImpl implements SessionService {
     private static ObjectMapper MAPPER = new ObjectMapper();
     private Logger logger= LoggerFactory.getLogger(SessionServiceImpl.class);
     @Autowired
-    @Qualifier("redisTemplate")
+    @Qualifier("cacheRedis")
     private RedisTemplate template;
     @Autowired
     private UserMapper userMapper;
@@ -56,11 +57,11 @@ public class SessionServiceImpl implements SessionService {
             template.opsForHash().put("token",request.getUsername(),token);
             //存入redis token到user
             template.opsForHash().put("tokentouser",token,request.getUsername());
-            //logger.info("存入"+user.getUsername()+"token到redis");
             logger.info(LogHelper.LogStatement(user.getUsername(),"登录","成功"));
         }
-        return response;    }
-
+        return response;
+    }
+    @Cacheable(value = "response", key = "#root.targetClass + #request.token", unless = "#result eq null")
     @Override
     public GetUserInfoResponse getUserInfo(GetUserInfoRequest request) throws NotFoundException {
         GetUserInfoResponse response=new GetUserInfoResponse();
