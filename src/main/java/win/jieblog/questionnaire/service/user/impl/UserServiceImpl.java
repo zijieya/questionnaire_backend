@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
         user.setEmail(request.getEmail());
         user.setAvatar(avatarHelper.getGravatarUrl(request.getEmail()));
         //校验用户名和邮箱是否已经存在
-        List<User> list =userMapper.getUserByEmailOrUsername(request.getEmail(),request.getUsername());
+        List<User> list =userMapper.selectUserByEmailOrUsername(request.getEmail(),request.getUsername());
         if (list.size()>0){
             logger.error(LogHelper.LogStatement(request.getUsername(),"注册","失败","已存在此用户名或邮箱"));
             throw new NotFoundException("已存在此用户名或邮箱", ErrorCode.USER_NOT_FOUND.getCode());

@@ -45,7 +45,7 @@ public class MailServeyImpl implements MailService {
     public SendMailResponse sendMail(SendMailRequest request) throws NotFoundException {
         request.validate();
         // 验证邮箱是否存在 重用 getUserByEmailOrUsername
-        List<User> list =userMapper.getUserByEmailOrUsername(request.getEmail(),null);
+        List<User> list =userMapper.selectUserByEmailOrUsername(request.getEmail(),null);
         if (list.size()==0){
             logger.error(LogHelper.LogStatement("系统","查找邮箱","失败","找不到该邮箱"));
             throw new NotFoundException("找不到该邮箱", ErrorCode.USER_NOT_FOUND.getCode());

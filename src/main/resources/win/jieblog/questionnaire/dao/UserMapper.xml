@@ -184,11 +184,11 @@
       isverifiedemail = #{isVerifiedEmail,jdbcType=INTEGER}
     where userid = #{userid,jdbcType=INTEGER}
   </update>
-  <select id="getUserByLogin" resultType="win.jieblog.questionnaire.model.entity.User">
+  <select id="selectUserByLogin" resultType="win.jieblog.questionnaire.model.entity.User">
     select userid, userserialid,username,email,password,role,createdatetime,updatedatetime,avatar,isverifiedemail from user
     where username=#{username} and password=#{password}
   </select>
-  <select id="getUserByEmailOrUsername" resultType="win.jieblog.questionnaire.model.entity.User">
+  <select id="selectUserByEmailOrUsername" resultType="win.jieblog.questionnaire.model.entity.User">
     select userid, userserialid,username,email,password,role,createdatetime,updatedatetime,avatar,isverifiedemail from user where
      email=#{email} or  username=#{username} or 1=0
   </select>

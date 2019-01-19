@@ -64,7 +64,7 @@ public interface UserMapper {
      * @param password
      * @return
      */
-    User getUserByLogin(@Param("username") String username,@Param("password") String password);
-    List<User> getUserByEmailOrUsername(@Param("email") String email, @Param("username") String username);
+    User selectUserByLogin(@Param("username") String username,@Param("password") String password);
+    List<User> selectUserByEmailOrUsername(@Param("email") String email, @Param("username") String username);
     List<GetUsernameByUserserialId> selectusernameByuserserialId(@Param("list") List<String> list);
 }

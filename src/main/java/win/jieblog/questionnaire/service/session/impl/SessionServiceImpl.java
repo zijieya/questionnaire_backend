@@ -38,7 +38,7 @@ public class SessionServiceImpl implements SessionService {
     public LoginResponse getLogin(HttpServletResponse resp, LoginRequest request) throws NotFoundException, JsonProcessingException {
         request.validate();
         JwtHelper jwtHelper=new JwtHelper();
-        User user=userMapper.getUserByLogin(request.getUsername(),request.getPassword());
+        User user=userMapper.selectUserByLogin(request.getUsername(),request.getPassword());
         LoginResponse response=new LoginResponse();
         if (user==null){
             logger.error(LogHelper.LogStatement(request.getUsername(),"登录","失败","用户名或密码错误"));
@@ -72,7 +72,7 @@ public class SessionServiceImpl implements SessionService {
             throw new NotFoundException("token不存在",ErrorCode.EMPTY_TOKEN.getCode());
         }
 
-        User user=userMapper.getUserByEmailOrUsername("",username).get(0);
+        User user=userMapper.selectUserByEmailOrUsername("",username).get(0);
         response.setUsername(user.getUsername());
         response.setAccess(user.getRole());
         response.setAvatar(user.getAvatar());
