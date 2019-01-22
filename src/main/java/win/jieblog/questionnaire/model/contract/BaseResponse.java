@@ -3,23 +3,23 @@ package win.jieblog.questionnaire.model.contract;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class BaseResponse {
+public class BaseResponse implements Serializable {
     @ApiModelProperty(value = "响应是否成功")
-    private boolean isSuccessful;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss" )
+    private boolean successful;
     @ApiModelProperty(value = "响应时间")
     private Date serverDate;
     @ApiModelProperty(value = "业务响应代码",notes = "当不抛出异常时则表明请求正常" )
     private int code=200;
 
     public boolean isSuccessful() {
-        return isSuccessful;
+        return successful;
     }
 
     public void setSuccessful(boolean successful) {
-        isSuccessful = successful;
+        this.successful = successful;
     }
 
     public Date getServerDate() {

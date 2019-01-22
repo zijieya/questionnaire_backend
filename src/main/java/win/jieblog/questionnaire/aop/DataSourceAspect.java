@@ -16,10 +16,10 @@ public class DataSourceAspect {
     public void resource(){}
     @Before(value ="resource()")
     public void before(JoinPoint joinPoint){
-        DatabaseContextHolder.setDatabaseType(DatabaseType.WRITE);
+        DatabaseContextHolder.setDatabaseType(DatabaseType.READ);
     }
     @After(value = "resource()")
     public void after(JoinPoint joinPoint){
-        DatabaseContextHolder.setDatabaseType(DatabaseType.READ);
+        DatabaseContextHolder.setDatabaseType(DatabaseType.WRITE);
     }
 }
