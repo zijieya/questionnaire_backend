@@ -6,7 +6,7 @@ pipeline {
                 sh 'chmod +x gradlew'
                 sh 'echo "正在执行代码质量检查"'
                 sh './gradlew check'
-                junit 'build/reports/**/*.xml'
+                junit 'build/test-results/**/*.xml'
              }
         }
         stage('build') {
