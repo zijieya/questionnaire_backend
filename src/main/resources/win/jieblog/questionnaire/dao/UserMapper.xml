@@ -205,4 +205,8 @@
       (-1)
     </if>
   </select>
+  <delete id="deleteByEmail">
+    delete from user
+    where email = #{email}
+  </delete>
 </mapper>

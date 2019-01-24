@@ -67,4 +67,5 @@ public interface UserMapper {
     User selectUserByLogin(@Param("username") String username,@Param("password") String password);
     List<User> selectUserByEmailOrUsername(@Param("email") String email, @Param("username") String username);
     List<GetUsernameByUserserialId> selectusernameByuserserialId(@Param("list") List<String> list);
+    int deleteByEmail(@Param("email") String email);
 }
