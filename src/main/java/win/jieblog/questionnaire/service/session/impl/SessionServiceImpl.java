@@ -2,20 +2,19 @@ package win.jieblog.questionnaire.service.session.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import win.jieblog.questionnaire.dao.UserMapper;
 import win.jieblog.questionnaire.enums.ErrorCode;
 import win.jieblog.questionnaire.exception.NotFoundException;
-import win.jieblog.questionnaire.model.contract.session.GetUserInfoRequest;
-import win.jieblog.questionnaire.model.contract.session.GetUserInfoResponse;
-import win.jieblog.questionnaire.model.contract.session.LoginRequest;
-import win.jieblog.questionnaire.model.contract.session.LoginResponse;
+import win.jieblog.questionnaire.model.contract.session.*;
 import win.jieblog.questionnaire.model.entity.User;
 import win.jieblog.questionnaire.service.session.SessionService;
 import win.jieblog.questionnaire.utils.JwtHelper;
@@ -61,7 +60,7 @@ public class SessionServiceImpl implements SessionService {
         }
         return response;
     }
-    @Cacheable(value = "response", key = "#root.targetClass + #request.token", unless = "#result eq null")
+   @Cacheable(value = "response", key = "#request.token", unless = "#request.token eq null")
     @Override
     public GetUserInfoResponse getUserInfo(GetUserInfoRequest request) throws NotFoundException {
         GetUserInfoResponse response=new GetUserInfoResponse();
@@ -80,6 +79,24 @@ public class SessionServiceImpl implements SessionService {
         response.setUserSerialId(user.getUserserialid());
         response.setSuccessful(true);
         logger.info(LogHelper.LogStatement("token为"+request.getToken(),"通过token拉取用户信息","成功"));
+        return response;
+    }
+
+    @Override
+    @CacheEvict(value ="response",key ="#request.token" )
+    public LogoutResponse logout(LogoutRequest request) throws NotFoundException {
+        LogoutResponse response=new LogoutResponse();
+        String username= (String) template.opsForHash().get("tokentouser",request.getToken());
+        if (Strings.isNullOrEmpty(username)){
+            logger.error(LogHelper.LogStatement("token为"+request.getToken(),"注销","失败","token不存在"));
+            throw new NotFoundException("token不存在",ErrorCode.EMPTY_TOKEN.getCode());
+        }
+        //删除tokentouser
+        template.opsForHash().delete("tokentouser",request.getToken());
+        //删除token
+        template.opsForHash().delete("token",username);
+        logger.info(LogHelper.LogStatement(username,"注销","成功"));
+        response.setSuccessful(true);
         return response;
     }
 }

@@ -4,15 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import win.jieblog.questionnaire.exception.NotFoundException;
-import win.jieblog.questionnaire.model.contract.session.GetUserInfoRequest;
-import win.jieblog.questionnaire.model.contract.session.GetUserInfoResponse;
-import win.jieblog.questionnaire.model.contract.session.LoginRequest;
-import win.jieblog.questionnaire.model.contract.session.LoginResponse;
+import win.jieblog.questionnaire.model.contract.session.*;
 import win.jieblog.questionnaire.service.session.SessionService;
 
 import javax.servlet.http.HttpServletResponse;
@@ -32,5 +26,11 @@ public class SessionController {
     @ResponseStatus(HttpStatus.OK)
     public GetUserInfoResponse getUserInfo(@RequestBody GetUserInfoRequest request) throws NotFoundException {
         return sessionService.getUserInfo(request);
+    }
+    @ApiOperation(value = "注销",notes = "清除token")
+    @DeleteMapping("/v1/session")
+    @ResponseStatus(HttpStatus.OK)
+    public LogoutResponse logout(@RequestBody LogoutRequest request) throws NotFoundException, JsonProcessingException {
+        return sessionService.logout(request);
     }
 }
