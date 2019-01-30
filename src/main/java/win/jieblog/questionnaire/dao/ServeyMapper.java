@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import win.jieblog.questionnaire.model.entity.Servey;
 
+import java.util.Date;
 import java.util.List;
 @Mapper
 public interface ServeyMapper {
@@ -65,4 +66,11 @@ public interface ServeyMapper {
     int updateBySerialId(Servey  servey);
     List<Servey> selectMyServeyByTagOrTitle(@Param("userserialid") String userserialid,@Param("keyword") String keyword);
     List<Servey> selectMyAnswerServeyByTagOrTitle(@Param("list") List<String> list,@Param("keyword") String keyword);
+
+    /**
+     * 过期问卷
+     * @param overtime
+     * @return
+     */
+    int updateOvertimeServey(@Param("overtime") Date overtime);
 }
