@@ -8,10 +8,7 @@ import win.jieblog.questionnaire.exception.DataBaseErrorException;
 import win.jieblog.questionnaire.exception.NotFoundException;
 import win.jieblog.questionnaire.model.contract.session.RegisterRequest;
 import win.jieblog.questionnaire.model.contract.session.RegisterResponse;
-import win.jieblog.questionnaire.model.contract.user.ResetPasswordRequest;
-import win.jieblog.questionnaire.model.contract.user.ResetPasswordResponse;
-import win.jieblog.questionnaire.model.contract.user.UploadAvatarRequest;
-import win.jieblog.questionnaire.model.contract.user.UploadAvatarResponse;
+import win.jieblog.questionnaire.model.contract.user.*;
 import win.jieblog.questionnaire.service.user.UserService;
 
 import java.io.IOException;
@@ -37,5 +34,11 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public UploadAvatarResponse uploadAvatar(UploadAvatarRequest request) throws NotFoundException, DataBaseErrorException, IOException {
         return userService.uploadAvatar(request);
+    }
+    @ApiOperation(value = "删除用户",notes = "删除用户")
+    @DeleteMapping("/v1/user")
+    @ResponseStatus(HttpStatus.OK)
+    public DeleteUserResponse regitser(@RequestBody DeleteUserRequest request) throws NotFoundException {
+        return userService.deleteUser(request);
     }
 }

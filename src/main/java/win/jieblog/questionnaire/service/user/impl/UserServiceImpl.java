@@ -17,10 +17,7 @@ import win.jieblog.questionnaire.exception.DataBaseErrorException;
 import win.jieblog.questionnaire.exception.NotFoundException;
 import win.jieblog.questionnaire.model.contract.session.RegisterRequest;
 import win.jieblog.questionnaire.model.contract.session.RegisterResponse;
-import win.jieblog.questionnaire.model.contract.user.ResetPasswordRequest;
-import win.jieblog.questionnaire.model.contract.user.ResetPasswordResponse;
-import win.jieblog.questionnaire.model.contract.user.UploadAvatarRequest;
-import win.jieblog.questionnaire.model.contract.user.UploadAvatarResponse;
+import win.jieblog.questionnaire.model.contract.user.*;
 import win.jieblog.questionnaire.model.entity.User;
 import win.jieblog.questionnaire.service.user.UserService;
 import win.jieblog.questionnaire.utils.AvatarHelper;
@@ -140,5 +137,17 @@ public class UserServiceImpl implements UserService {
             logger.info(LogHelper.LogStatement(request.getUserserialid(),"上传头像","成功"));
             return uploadAvatarResponse;
         }
+    }
+
+    @Override
+    public DeleteUserResponse deleteUser(DeleteUserRequest request) throws NotFoundException {
+         int deleteCount= userMapper.deleteByEmail(request.getEmail());
+         if (deleteCount!=1){
+             logger.error(LogHelper.LogStatement("系统","删除用户","失败","不存在该邮箱"));
+             throw new NotFoundException("不存在该邮箱", ErrorCode.RESOURCENAME_NOT_FOUND.getCode());
+         }
+         DeleteUserResponse response=new DeleteUserResponse();
+         response.setSuccessful(true);
+         return response;
     }
 }
