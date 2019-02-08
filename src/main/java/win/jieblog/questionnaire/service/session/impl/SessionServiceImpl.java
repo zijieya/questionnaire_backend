@@ -50,12 +50,12 @@ public class SessionServiceImpl implements SessionService {
             Map<String,String> map=new HashMap<>();
             map.put("username",user.getUsername());
             String subject=MAPPER.writeValueAsString(map);
-            String token=jwtHelper.createToken(user.getUserserialid(),subject,ttlTime);
+            String token=jwtHelper.createToken(user.getUserserialid(),user.getRole(),subject,ttlTime);
             resp.setHeader("Authorization","Bearer "+token);
-            //存入 redis user到token
-            template.opsForHash().put("token",request.getUsername(),token);
-            //存入redis token到user
-            template.opsForHash().put("tokentouser",token,request.getUsername());
+//            //存入 redis user到token
+//            template.opsForHash().put("token",request.getUsername(),token);
+//            //存入redis token到user
+//            template.opsForHash().put("tokentouser",token,request.getUsername());
             logger.info(LogHelper.LogStatement(user.getUsername(),"登录","成功"));
         }
         return response;

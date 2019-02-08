@@ -10,7 +10,8 @@ public enum ErrorCode {
     UPDATE_ERROR(50001),
     INSERT_ERROR(50002),
     URL_NOT_FOUND(40403),
-    RESOURCENAME_NOT_FOUND(40404);
+    RESOURCENAME_NOT_FOUND(40404),
+    FORBIDDEN_ACCESS(40305);
     private int code;
 
     public int getCode() {

@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
     @Qualifier("redisTemplate")
     private RedisTemplate template;
     @Autowired
-    UserMapper userMapper;
+    private UserMapper userMapper;
     @Autowired
     private AvatarHelper avatarHelper;
 

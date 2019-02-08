@@ -14,7 +14,6 @@ import win.jieblog.questionnaire.utils.JwtHelper;
 import win.jieblog.questionnaire.utils.LogHelper;
 
 import javax.servlet.*;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Date;
@@ -22,10 +21,11 @@ import java.util.Date;
 /**
  * todo：抛出异常信息
  */
-@WebFilter(urlPatterns = {"/*/servey/*"})
+//@WebFilter(urlPatterns = {"/v1/servey/*","/v1/mail/*","/v1/user"} )
+//@Component
 public class TokenFilter implements Filter  {
     private RedisTemplate template;
-    Logger logger= LoggerFactory.getLogger(TokenFilter.class);
+    private Logger logger= LoggerFactory.getLogger(TokenFilter.class);
 
     @Autowired
     public void setTemplate(@Qualifier("redisTemplate") RedisTemplate template) {
@@ -44,8 +44,9 @@ public class TokenFilter implements Filter  {
             try {
                 throw new AuthorityException("不存在token", ErrorCode.EMPTY_TOKEN.getCode());
             } catch (AuthorityException e) {
-                logger.error(LogHelper.LogStatement("系统","token过滤","失败","不存在token"));
+                e.printStackTrace();
             }
+            logger.error(LogHelper.LogStatement("系统","token过滤","失败","不存在token"));
         }
         else
         {
