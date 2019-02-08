@@ -20,6 +20,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.jms.annotation.EnableJms;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -34,6 +35,7 @@ import win.jieblog.questionnaire.configuration.OssConfig;
 @EnableTransactionManagement
 @EnableCaching
 @EnableScheduling
+@EnableJms
 public class QuestionnaireApplication {
     public static void main(String[] args) {
         SpringApplication.run(QuestionnaireApplication.class, args);
