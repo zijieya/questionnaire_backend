@@ -10,7 +10,7 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath "gradle.plugin.com.thinkimi.gradle:mybatis-generator-plugin:2.0"
+        classpath "gradle.plugin.com.thinkimi.gradle:mybatis-generator-plugin:2.1.2"
     }
 
     
