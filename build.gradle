@@ -42,7 +42,7 @@ bootWar {
     launchScript()
 }
 dependencies {
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-aop', version: '2.1.9.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-aop', version: '2.4.4'
     implementation('org.springframework.boot:spring-boot-starter-actuator')
     implementation('org.springframework.boot:spring-boot-starter-cache')
     implementation('org.springframework.boot:spring-boot-starter-data-redis')
