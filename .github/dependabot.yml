@@ -1,0 +1,36 @@
+version: 2
+updates:
+- package-ecosystem: gradle
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "21:00"
+  open-pull-requests-limit: 10
+  target-branch: dev
+  ignore:
+  - dependency-name: org.springframework.boot:spring-boot-starter-aop
+    versions:
+    - 2.4.2
+    - 2.4.3
+    - 2.4.4
+  - dependency-name: org.springframework.boot:spring-boot-starter-activemq
+    versions:
+    - 2.4.2
+    - 2.4.3
+    - 2.4.4
+  - dependency-name: org.springframework.boot:spring-boot-gradle-plugin
+    versions:
+    - 2.4.2
+    - 2.4.3
+    - 2.4.4
+  - dependency-name: com.alibaba:druid-spring-boot-starter
+    versions:
+    - 1.2.4
+    - 1.2.5
+  - dependency-name: com.aliyun.oss:aliyun-sdk-oss
+    versions:
+    - 3.11.2
+    - 3.11.3
+  - dependency-name: org.apache.commons:commons-lang3
+    versions:
+    - "3.11"
